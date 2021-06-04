@@ -1,7 +1,4 @@
+/// Creates a cool 3D rain effect
 library parallax_rain;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/parallax_rain.dart';

@@ -30,6 +30,12 @@
 .pub/
 build/
 
+# Compiled/built code
+android
+ios
+windows
+web
+
 # Android related
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
