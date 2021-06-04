@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Expanded(
                   child: ParallaxRain(
+                    numberOfDrops: 100,
                     dropColors: [
                       Colors.red,
                       Colors.green,
@@ -50,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Expanded(
                   child: ParallaxRain(
+                    numberOfDrops: 100,
                     dropColors: [
                       Colors.red,
                       Colors.green,
@@ -72,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Expanded(
                   child: ParallaxRain(
+                    numberOfDrops: 100,
                     dropColors: [Colors.blueGrey],
                     trail: true,
                     child: Text(
@@ -81,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Expanded(
                   child: ParallaxRain(
+                    numberOfDrops: 100,
                     dropColors: [Colors.blueGrey],
                     trail: true,
                     dropFallSpeed: 5,
