@@ -63,6 +63,6 @@ A full example can be found in the example directory
 
 ## About me
 
-Visit my LinkedIn at https://www.linkedin.com/in/zaca
+Visit my LinkedIn at https://www.linkedin.com/in/zaca 
 
 I'm also the author of the Flutter glass package that allows you to convert any flutter widget into a glass/frosted glass version of itself, check it out at https://pub.dev/packages/glass
