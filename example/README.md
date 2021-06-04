@@ -1,6 +1,6 @@
 # example
 
-A new Flutter project.
+A new Flutter project. Be sure to run `flutter create .` to generate the android, ios, windows, web etc. files.
 
 ## Getting Started
 
