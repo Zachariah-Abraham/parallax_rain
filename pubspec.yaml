@@ -1,7 +1,7 @@
 name: parallax_rain
 description: Create cool 3D rain effects.
-version: 0.0.1
-homepage:
+version: 1.0.0
+homepage: https://github.com/Zachariah-Abraham/parallax_rain
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
