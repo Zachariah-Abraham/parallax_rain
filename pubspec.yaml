@@ -1,6 +1,6 @@
 name: parallax_rain
 description: Use this package to create cool 3D rain effects. Customize with multiple colors, different raindrop speeds, drop trail effects and more!
-version: 1.0.0+3
+version: 1.0.1
 homepage: https://github.com/Zachariah-Abraham/parallax_rain
 
 environment:
