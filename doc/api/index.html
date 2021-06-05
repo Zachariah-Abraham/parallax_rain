@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 0.44.0">
+  <meta name="description" content="parallax_rain API docs, for the Dart programming language.">
+  <title>parallax_rain - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href=""
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="https://github.com/Zachariah-Abraham/parallax_rain">parallax_rain package</a></li>
+  </ol>
+  <div class="self-name">parallax_rain</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <p><a href="https://pub.dev/packages/parallax_rain"><img src="https://img.shields.io/pub/v/glass.svg?style=flat-square" alt="Pub Version"></a>
+<a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" alt="License"></a></p>
+<h1 id="parallax-rain">Parallax Rain</h1>
+<p>Create a cool 3D rain effect, with plenty of customization!</p>
+<p><img src="https://raw.githubusercontent.com/Zachariah-Abraham/parallax_rain/main/example/screenshots/1.PNG" alt="Sample screenshot"></p>
+<h2 id="installation">Installation</h2>
+<h3 id="1-depend-on-it">1. Depend on it</h3>
+<p>Add this to your package's <code>pubspec.yaml</code> file:</p>
+<pre class="language-yaml"><code class="language-yaml">dependencies:
+    parallax_rain:
+</code></pre>
+<h3 id="2-install-it">2. Install it</h3>
+<p>You can install packages from the command line:</p>
+<pre class="language-bash"><code class="language-bash">$ pub get
+..
+</code></pre>
+<p>Alternatively, your editor might support pub. Check the docs for your editor to learn more.</p>
+<h3 id="3-import-it">3. Import it</h3>
+<p>Now in your Flutter code, you can use:</p>
+<pre class="language-Dart"><code class="language-Dart">import 'package:parallax_rain/parallax_rain.dart';
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>If you want to give <code>YourWidget</code> a 3D rain background, simple wrap it with the <code>ParallaxRain</code> widget, with <code>YourWidget</code> as the child parameter. You can also have the rain effect in the foreground, use multiple drop colors, adjust the speed, add trails to your drops and lots more!</p>
+<p>For example:</p>
+<pre class="language-Dart"><code class="language-Dart">ParallaxRain(
+    dropColors: [
+        Colors.red,
+        Colors.green,
+        Colors.blue,
+        Colors.yellow,
+        Colors.brown,
+        Colors.blueGrey
+    ],
+    child: Text(
+        "Multicolor",
+    ),
+),
+</code></pre>
+<p>A full example can be found in the example directory</p>
+<h2 id="about-me">About me</h2>
+<p>Visit my LinkedIn at <a href="https://www.linkedin.com/in/zaca">https://www.linkedin.com/in/zaca</a></p>
+<p>I'm also the author of the Flutter glass package that allows you to convert any flutter widget into a glass/frosted glass version of itself, check it out at <a href="https://pub.dev/packages/glass">https://pub.dev/packages/glass</a></p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="parallax_rain">
+  <span class="name"><a href="parallax_rain/parallax_rain-library.html">parallax_rain</a></span> 
+
+</dt>
+<dd>Creates a cool 3D rain effect 
+</dd>
+
+        </dl>
+      </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="https://github.com/Zachariah-Abraham/parallax_rain">parallax_rain package</a></li>
+</ol>
+
+
+    <h5 class="hidden-xs"><span class="package-name">parallax_rain</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="parallax_rain/parallax_rain-library.html">parallax_rain</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    parallax_rain
+      1.0.0
+  </span>
+
+  
+</footer>
+
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

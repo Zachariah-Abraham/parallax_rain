@@ -3,6 +3,7 @@ import 'dart:math';
 
 // TODO: Allow custom positioning of the child widget (is only center right now)
 
+/// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
   ParallaxRain(
       {this.numberOfDrops = 200,
@@ -213,10 +214,18 @@ class ParallaxRainPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
+/// Model class for drops in ParallaxRain
 class Drop {
+  /// Represents a drop by a Rect object, i.e. a combination of Offset and Size
   Rect drop;
+
+  /// The speed at which this drop is travelling
   double dropSpeed;
+
+  /// The layer in which this drop is right now
   int dropLayer;
+
+  /// The color that this drop has right now
   Color dropColor;
 
   Drop(
