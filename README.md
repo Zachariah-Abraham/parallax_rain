@@ -6,6 +6,10 @@ Create a cool 3D rain effect, with plenty of customization!
 
 ![Sample screenshot](https://raw.githubusercontent.com/Zachariah-Abraham/parallax_rain/main/example/screenshots/1.PNG)
 
+https://user-images.githubusercontent.com/24973509/120873946-e964f600-c5c1-11eb-8cc1-eabb493ddee2.mp4
+
+
+
 ## Installation
 
 ### 1. Depend on it
