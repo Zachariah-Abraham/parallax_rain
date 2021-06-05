@@ -1,4 +1,4 @@
-[![Pub Version](https://img.shields.io/pub/v/glass.svg?style=flat-square)](https://pub.dev/packages/parallax_rain)
+[![Pub Version](https://img.shields.io/pub/v/parallax_rain.svg?style=flat-square)](https://pub.dev/packages/parallax_rain)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 # Parallax Rain
