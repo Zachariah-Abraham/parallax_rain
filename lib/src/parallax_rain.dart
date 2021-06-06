@@ -82,30 +82,32 @@ class ParallaxRainState extends State<ParallaxRain> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       runAnimation(parallaxRainPainter);
     });
-    return LayoutBuilder(builder: (context, constraints) {
-      parallaxRainPainter = new ParallaxRainPainter(
-          numberOfDrops: widget.numberOfDrops,
-          parentSize: constraints.biggest,
-          dropFallSpeed: widget.dropFallSpeed,
-          numberOfLayers: widget.numberOfLayers,
-          trail: widget.trail,
-          dropHeight: widget.dropHeight,
-          dropWidth: widget.dropWidth,
-          dropColors: widget.dropColors,
-          trailStartFraction: widget.trailStartFraction,
-          distanceBetweenLayers: widget.distanceBetweenLayers,
-          notifier: notifier);
-      return ClipRect(
-        child: CustomPaint(
-          painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
-          child: Container(
-            child: widget.child,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        parallaxRainPainter = new ParallaxRainPainter(
+            numberOfDrops: widget.numberOfDrops,
+            parentSize: constraints.biggest,
+            dropFallSpeed: widget.dropFallSpeed,
+            numberOfLayers: widget.numberOfLayers,
+            trail: widget.trail,
+            dropHeight: widget.dropHeight,
+            dropWidth: widget.dropWidth,
+            dropColors: widget.dropColors,
+            trailStartFraction: widget.trailStartFraction,
+            distanceBetweenLayers: widget.distanceBetweenLayers,
+            notifier: notifier);
+        return ClipRect(
+          child: CustomPaint(
+            painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
+            child: Container(
+              child: widget.child,
+            ),
+            foregroundPainter:
+                (widget.rainIsInBackground) ? null : parallaxRainPainter,
           ),
-          foregroundPainter:
-              (widget.rainIsInBackground) ? null : parallaxRainPainter,
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -170,15 +172,14 @@ class ParallaxRainPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     double effectiveLayer;
     for (int i = 0; i < this.numberOfDrops; i++) {
-      if (dropList[i].drop.top + dropList[i].dropSpeed <
-          this.parentSize.height) {
+      if (dropList[i].drop.top + dropList[i].dropSpeed < size.height) {
         dropList[i].drop = Offset(dropList[i].drop.left,
                 dropList[i].drop.top + dropList[i].dropSpeed) &
             dropList[i].drop.size;
       } else {
         int layer = random.nextInt(numberOfLayers);
         effectiveLayer = layer * distanceBetweenLayers;
-        dropList[i].drop = Offset(random.nextDouble() * parentSize.width,
+        dropList[i].drop = Offset(random.nextDouble() * size.width,
                 -(dropSize.height + (dropSize.height * effectiveLayer))) &
             Size(dropSize.width + (dropSize.width * effectiveLayer),
                 dropSize.height + (dropSize.height * effectiveLayer));

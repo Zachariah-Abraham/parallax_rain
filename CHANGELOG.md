@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Fixed a bug that stopped the rain when used with a widget that provides infinite height or width (like a Row or a Column)
+
 ## 1.0.3
 
 * Documentation fixes
