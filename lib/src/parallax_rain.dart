@@ -98,7 +98,7 @@ class ParallaxRainState extends State<ParallaxRain> {
       return ClipRect(
         child: CustomPaint(
           painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
-          child: Center(
+          child: Container(
             child: widget.child,
           ),
           foregroundPainter:
