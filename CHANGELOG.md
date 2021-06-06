@@ -1,4 +1,8 @@
-## 1.0.1
+## 1.0.3
+
+* Documentation fixes
+
+## 1.0.2
 
 * The ParallaxRain widget now sizes itself to its child rather than its parent.
 
