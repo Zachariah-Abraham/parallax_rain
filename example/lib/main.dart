@@ -24,17 +24,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final Key parallaxOne = GlobalKey();
+  final Key parallaxTwo = GlobalKey();
+  final Key parallaxThree = GlobalKey();
+  final Key parallaxFour = GlobalKey();
+  int counter = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: ParallaxRain(
+                    key: parallaxOne,
                     dropColors: [
                       Colors.red,
                       Colors.green,
@@ -43,13 +51,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       Colors.brown,
                       Colors.blueGrey
                     ],
-                    child: Text(
-                      "Multicolor",
+                    child: Center(
+                      child: TextButton(
+                        child: Text(
+                          "Multicolor with setState (press here): $counter",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            counter++;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: ParallaxRain(
+                    key: parallaxTwo,
                     dropColors: [
                       Colors.red,
                       Colors.green,
@@ -59,8 +78,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       Colors.blueGrey
                     ],
                     trail: true,
-                    child: Text(
-                      "Multicolor Trail",
+                    child: Center(
+                      child: Text(
+                        "Multicolor Trail",
+                      ),
                     ),
                   ),
                 ),
@@ -69,23 +90,30 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Expanded(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: ParallaxRain(
+                    key: parallaxThree,
                     dropColors: [Colors.blueGrey],
                     trail: true,
-                    child: Text(
-                      "BlueGrey Trail",
+                    child: Center(
+                      child: Text(
+                        "BlueGrey Trail",
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: ParallaxRain(
+                    key: parallaxFour,
                     dropColors: [Colors.blueGrey],
                     trail: true,
                     dropFallSpeed: 5,
-                    child: Text(
-                      "BlueGrey Trail Fast",
+                    child: Center(
+                      child: Text(
+                        "BlueGrey Trail Fast",
+                      ),
                     ),
                   ),
                 ),
