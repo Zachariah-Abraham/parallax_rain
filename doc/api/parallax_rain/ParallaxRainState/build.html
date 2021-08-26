@@ -160,33 +160,16 @@ prints green, as expected.</p>
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 Widget build(BuildContext context) {
-  WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-    runAnimation(parallaxRainPainter);
-  });
-  return LayoutBuilder(builder: (context, constraints) {
-    parallaxRainPainter = new ParallaxRainPainter(
-        numberOfDrops: widget.numberOfDrops,
-        parentSize: constraints.biggest,
-        dropFallSpeed: widget.dropFallSpeed,
-        numberOfLayers: widget.numberOfLayers,
-        trail: widget.trail,
-        dropHeight: widget.dropHeight,
-        dropWidth: widget.dropWidth,
-        dropColors: widget.dropColors,
-        trailStartFraction: widget.trailStartFraction,
-        distanceBetweenLayers: widget.distanceBetweenLayers,
-        notifier: notifier);
-    return ClipRect(
-      child: CustomPaint(
-        painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
-        child: Center(
-          child: widget.child,
-        ),
-        foregroundPainter:
-            (widget.rainIsInBackground) ? null : parallaxRainPainter,
+  return ClipRect(
+    child: CustomPaint(
+      painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
+      child: Container(
+        child: widget.child,
       ),
-    );
-  });
+      foregroundPainter:
+          (widget.rainIsInBackground) ? null : parallaxRainPainter,
+    ),
+  );
 }</code></pre>
 </section>
 
@@ -260,7 +243,7 @@ Widget build(BuildContext context) {
 <footer>
   <span class="no-break">
     parallax_rain
-      1.0.0
+      1.1.0
   </span>
 
   

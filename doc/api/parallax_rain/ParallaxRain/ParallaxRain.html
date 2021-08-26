@@ -50,7 +50,8 @@
 </h1></div>
 
     <section class="multi-line-signature">
-      <span class="name ">ParallaxRain</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-numberOfDrops">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">numberOfDrops</span> = <span class="default-value">200</span>, </span></li>
+      <span class="name ">ParallaxRain</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-key">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/Key-class.html">Key</a>?</span> <span class="parameter-name">key</span>, </span></li>
+<li><span class="parameter" id="-param-numberOfDrops"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">numberOfDrops</span> = <span class="default-value">200</span>, </span></li>
 <li><span class="parameter" id="-param-dropFallSpeed"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">dropFallSpeed</span> = <span class="default-value">1</span>, </span></li>
 <li><span class="parameter" id="-param-numberOfLayers"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">numberOfLayers</span> = <span class="default-value">3</span>, </span></li>
 <li><span class="parameter" id="-param-dropHeight"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">dropHeight</span> = <span class="default-value">20</span>, </span></li>
@@ -71,7 +72,8 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">ParallaxRain(
-    {this.numberOfDrops = 200,
+    {this.key,
+    this.numberOfDrops = 200,
     this.dropFallSpeed = 1,
     this.numberOfLayers = 3,
     this.dropHeight = 20,
@@ -85,7 +87,8 @@
     : assert(numberOfLayers &gt;= 1, &quot;The minimum number of layers is 1&quot;),
       assert(dropColors.isNotEmpty, &quot;The drop colors list cannot be empty&quot;),
       assert(distanceBetweenLayers &gt; 0,
-          &quot;The distance between layers cannot be 0, try setting the number of layers to 1 instead&quot;);</code></pre>
+          &quot;The distance between layers cannot be 0, try setting the number of layers to 1 instead&quot;),
+      super(key: key);</code></pre>
 </section>
 
 
@@ -123,7 +126,7 @@
     <li><a href="../../parallax_rain/ParallaxRain/dropHeight.html">dropHeight</a></li>
     <li><a href="../../parallax_rain/ParallaxRain/dropWidth.html">dropWidth</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/hashCode.html">hashCode</a></li>
-    <li class="inherited"><a href="https://api.flutter.dev/flutter/widgets/Widget/key.html">key</a></li>
+    <li><a href="../../parallax_rain/ParallaxRain/key.html">key</a></li>
     <li><a href="../../parallax_rain/ParallaxRain/numberOfDrops.html">numberOfDrops</a></li>
     <li><a href="../../parallax_rain/ParallaxRain/numberOfLayers.html">numberOfLayers</a></li>
     <li><a href="../../parallax_rain/ParallaxRain/rainIsInBackground.html">rainIsInBackground</a></li>
@@ -161,7 +164,7 @@
 <footer>
   <span class="no-break">
     parallax_rain
-      1.0.0
+      1.1.0
   </span>
 
   

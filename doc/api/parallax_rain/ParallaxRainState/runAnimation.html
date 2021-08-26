@@ -52,9 +52,8 @@
     <section class="multi-line-signature">
       
 
-<span class="returntype">Future</span>
-<span class="name ">runAnimation</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="runAnimation-param-parallaxRainPainter"><span class="type-annotation"><a href="../../parallax_rain/ParallaxRainPainter-class.html">ParallaxRainPainter</a></span> <span class="parameter-name">parallaxRainPainter</span></span></li>
-</ol>)
+<span class="returntype">dynamic</span>
+<span class="name ">runAnimation</span>(<wbr>)
 
       
 
@@ -65,7 +64,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">runAnimation(ParallaxRainPainter parallaxRainPainter) async {
+  <pre class="language-dart"><code class="language-dart">runAnimation() async {
   while (true) {
     notifier.value = !notifier.value;
     await Future.delayed(Duration());
@@ -143,7 +142,7 @@
 <footer>
   <span class="no-break">
     parallax_rain
-      1.0.0
+      1.1.0
   </span>
 
   

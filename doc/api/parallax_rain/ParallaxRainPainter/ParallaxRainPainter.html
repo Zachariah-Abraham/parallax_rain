@@ -51,7 +51,6 @@
 
     <section class="multi-line-signature">
       <span class="name ">ParallaxRainPainter</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="-param-numberOfDrops">{<span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">numberOfDrops</span>, </span></li>
-<li><span class="parameter" id="-param-parentSize"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/Size-class.html">Size</a></span> <span class="parameter-name">parentSize</span>, </span></li>
 <li><span class="parameter" id="-param-dropFallSpeed"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">dropFallSpeed</span>, </span></li>
 <li><span class="parameter" id="-param-numberOfLayers"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">numberOfLayers</span>, </span></li>
 <li><span class="parameter" id="-param-trail"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">trail</span>, </span></li>
@@ -70,47 +69,19 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ParallaxRainPainter(
-    {required this.numberOfDrops,
-    required this.parentSize,
-    required this.dropFallSpeed,
-    required this.numberOfLayers,
-    required this.trail,
-    required this.dropHeight,
-    required this.dropWidth,
-    required this.dropColors,
-    required this.trailStartFraction,
-    required this.distanceBetweenLayers,
-    required ValueNotifier notifier})
-    : super(repaint: notifier) {
-  paintObject = Paint()
-    ..color = dropColors[0]
-    ..style = PaintingStyle.fill;
-
-  double effectiveLayer;
-  for (int i = 0; i &lt; this.numberOfDrops; i++) {
-    double x = random.nextDouble() * parentSize.width;
-    double y = random.nextDouble() * parentSize.height;
-
-    &#47;&#47; Keeping [widget.numberOfLayers] layers for the parallax effect, the base values are for the layer furthest behind
-    int layerNumber =
-        random.nextInt(numberOfLayers); &#47;&#47; 0 is the layer furthest behind
-    effectiveLayer = layerNumber * distanceBetweenLayers;
-    dropSize = new Size(dropWidth, dropHeight);
-    dropList.add(
-      new Drop(
-          drop: Offset(x, y) &amp;
-              Size(
-                dropSize.width + (dropSize.width * effectiveLayer),
-                dropSize.height + (dropSize.height * effectiveLayer),
-              ),
-          dropSpeed:
-              this.dropFallSpeed + (this.dropFallSpeed * effectiveLayer),
-          dropLayer: layerNumber,
-          dropColor: dropColors[random.nextInt(dropColors.length)]),
-    );
-  }
-}</code></pre>
+  <pre class="language-dart"><code class="language-dart">ParallaxRainPainter({
+  &#47;&#47; required this.parentSize,
+  required this.numberOfDrops,
+  required this.dropFallSpeed,
+  required this.numberOfLayers,
+  required this.trail,
+  required this.dropHeight,
+  required this.dropWidth,
+  required this.dropColors,
+  required this.trailStartFraction,
+  required this.distanceBetweenLayers,
+  required this.notifier,
+}) : super(repaint: notifier);</code></pre>
 </section>
 
 
@@ -149,10 +120,10 @@
     <li><a href="../../parallax_rain/ParallaxRainPainter/dropSize.html">dropSize</a></li>
     <li><a href="../../parallax_rain/ParallaxRainPainter/dropWidth.html">dropWidth</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../../parallax_rain/ParallaxRainPainter/notifier.html">notifier</a></li>
     <li><a href="../../parallax_rain/ParallaxRainPainter/numberOfDrops.html">numberOfDrops</a></li>
     <li><a href="../../parallax_rain/ParallaxRainPainter/numberOfLayers.html">numberOfLayers</a></li>
     <li><a href="../../parallax_rain/ParallaxRainPainter/paintObject.html">paintObject</a></li>
-    <li><a href="../../parallax_rain/ParallaxRainPainter/parentSize.html">parentSize</a></li>
     <li><a href="../../parallax_rain/ParallaxRainPainter/random.html">random</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/semanticsBuilder.html">semanticsBuilder</a></li>
@@ -162,6 +133,7 @@
     <li class="section-title"><a href="../../parallax_rain/ParallaxRainPainter-class.html#instance-methods">Methods</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/addListener.html">addListener</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/hitTest.html">hitTest</a></li>
+    <li><a href="../../parallax_rain/ParallaxRainPainter/initialize.html">initialize</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
     <li><a href="../../parallax_rain/ParallaxRainPainter/paint.html">paint</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/rendering/CustomPainter/removeListener.html">removeListener</a></li>
@@ -187,7 +159,7 @@
 <footer>
   <span class="no-break">
     parallax_rain
-      1.0.0
+      1.1.0
   </span>
 
   

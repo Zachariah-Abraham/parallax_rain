@@ -98,7 +98,19 @@ method, as in <code>super.initState()</code>.</p>
   <pre class="language-dart"><code class="language-dart">@override
 void initState() {
   super.initState();
-  notifier = ValueNotifier(false);
+  runAnimation();
+  parallaxRainPainter = ParallaxRainPainter(
+    numberOfDrops: widget.numberOfDrops,
+    dropFallSpeed: widget.dropFallSpeed,
+    numberOfLayers: widget.numberOfLayers,
+    trail: widget.trail,
+    dropHeight: widget.dropHeight,
+    dropWidth: widget.dropWidth,
+    dropColors: widget.dropColors,
+    trailStartFraction: widget.trailStartFraction,
+    distanceBetweenLayers: widget.distanceBetweenLayers,
+    notifier: notifier,
+  );
 }</code></pre>
 </section>
 
@@ -172,7 +184,7 @@ void initState() {
 <footer>
   <span class="no-break">
     parallax_rain
-      1.0.0
+      1.1.0
   </span>
 
   
