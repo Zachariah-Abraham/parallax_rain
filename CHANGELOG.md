@@ -1,14 +1,18 @@
+## 1.1.1
+
+* Relaxed SDK constraints.
+
 ## 1.1.0
 
 * The ParallaxRain widget's painter will now ignore state changes so the rain doesn't reset every time setState is called. (unless you instantiate a new ParallaxRain widget on purpose).
 
 ## 1.0.4
 
-* Fixed a bug that stopped the rain when used with a widget that provides infinite height or width (like a Row or a Column)
+* Fixed a bug that stopped the rain when used with a widget that provides infinite height or width (like a Row or a Column).
 
 ## 1.0.3
 
-* Documentation fixes
+* Documentation fixes.
 
 ## 1.0.2
 
@@ -16,7 +20,7 @@
 
 ## 1.0.1
 
-* Added documentation
+* Added documentation.
 
 ## 1.0.0
 
