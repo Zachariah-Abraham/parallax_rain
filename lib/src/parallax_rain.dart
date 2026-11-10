@@ -177,6 +177,9 @@ class ParallaxRainPainter extends CustomPainter {
   Duration? _elapsed;
   Duration? _lastPaintElapsed;
 
+  /// The canvas size of the last paint, to move the drops along when the size changes.
+  Size? _lastSize;
+
   /// Paints per drop color and layer, created on first use. For trails the shader is in the drop's
   /// local coordinates, so the same paint works for every drop of that color and layer.
   final Map<Color, List<Paint?>> _paints = <Color, List<Paint?>>{};
@@ -218,6 +221,7 @@ class ParallaxRainPainter extends CustomPainter {
   void _takeOver(ParallaxRainPainter old) {
     _elapsed = old._elapsed;
     _lastPaintElapsed = old._lastPaintElapsed;
+    _lastSize = old._lastSize;
     if (old.dropList.isEmpty) return;
     dropSize = Size(dropWidth, dropHeight);
     paintObject = Paint()
@@ -255,6 +259,20 @@ class ParallaxRainPainter extends CustomPainter {
     drop.dropSpeed = dropFallSpeed * scale;
     drop.dropLayer = layer;
     drop.dropColor = dropColors[random.nextInt(dropColors.length)];
+  }
+
+  /// Moves the drops from a canvas of [oldSize] to one of [size], keeping their relative
+  /// positions. On an axis that had no extent, drops are scattered randomly instead.
+  void _resize(Size oldSize, Size size) {
+    for (final Drop drop in dropList) {
+      final double left = oldSize.width > 0
+          ? drop.drop.left * size.width / oldSize.width
+          : random.nextDouble() * size.width;
+      final double top = oldSize.height > 0
+          ? drop.drop.top * size.height / oldSize.height
+          : random.nextDouble() * size.height;
+      drop.drop = Rect.fromLTWH(left, top, drop.drop.width, drop.drop.height);
+    }
   }
 
   /// How many reference frames the drops move in this paint.
@@ -295,6 +313,9 @@ class ParallaxRainPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final Size? lastSize = _lastSize;
+    if (lastSize != null && lastSize != size) _resize(lastSize, size);
+    _lastSize = size;
     if (dropList.length < numberOfDrops) {
       initialize(canvas, size);
     }

@@ -28,15 +28,12 @@ _Last updated: 2026-11-10_
 
 ## Pending (rough priority order)
 
-### 1. Bugs
-- [ ] Drops aren't re-scattered when the size changes (rotation, window resize).
-
-### 2. Housekeeping
+### 1. Housekeeping
 - [ ] Decide whether to make `ParallaxRainState`, `ParallaxRainPainter`, `Drop` private (major).
       If yes, also remove the deprecated `ParallaxRainState.runAnimation`.
 - [ ] Optional: make the `ParallaxRain` constructor `const` (non-breaking, a `feat:`).
 
-### 3. Features (ideas, not committed to)
+### 2. Features (ideas, not committed to)
 - [ ] Custom drop look: drop shapes (rounded, streak/line, circle) and/or a sprite `ui.Image`
       drawn with `drawRawAtlas`. A per-drop widget builder is too slow (hundreds of widgets per
       frame).
