@@ -1,69 +1,67 @@
 [![Pub Version](https://img.shields.io/pub/v/parallax_rain.svg?style=flat-square)](https://pub.dev/packages/parallax_rain)
+[![CI](https://github.com/Zachariah-Abraham/parallax_rain/actions/workflows/ci.yml/badge.svg)](https://github.com/Zachariah-Abraham/parallax_rain/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 # Parallax Rain
 Create a cool 3D rain effect, with plenty of customization!
 
-![Sample screenshot](https://raw.githubusercontent.com/Zachariah-Abraham/parallax_rain/main/example/screenshots/1.PNG)
+![Multicolor and blue-grey rain, with and without drop trails](https://raw.githubusercontent.com/Zachariah-Abraham/parallax_rain/main/doc/screenshots/rain.png)
 
-![Sample video](https://raw.githubusercontent.com/Zachariah-Abraham/parallax_rain/main/example/screenshots/1.gif)
-
-
+![Animated parallax rain in the example app](https://raw.githubusercontent.com/Zachariah-Abraham/parallax_rain/main/doc/screenshots/rain.webp)
 
 ## Installation
 
-### 1. Depend on it
-
-Add this to your package's `pubspec.yaml` file:
-
-```yaml
-dependencies:
-    parallax_rain:
-```
-
-
-### 2. Install it
-
-You can install packages from the command line:
-
 ```bash
-$ pub get
-..
+flutter pub add parallax_rain
 ```
 
-Alternatively, your editor might support pub. Check the docs for your editor to learn more.
+Then import it:
 
-### 3. Import it
-
-Now in your Flutter code, you can use:
-
-```Dart
+```dart
 import 'package:parallax_rain/parallax_rain.dart';
 ```
 
 ## Usage
 
-If you want to give `YourWidget` a 3D rain background, simple wrap it with the `ParallaxRain` widget, with `YourWidget` as the child parameter. You can also have the rain effect in the foreground, use multiple drop colors, adjust the speed, add trails to your drops and lots more! 
+To give `YourWidget` a 3D rain background, wrap it in a `ParallaxRain` widget. The widget sizes
+itself to its child. You can also put the rain in the foreground, use multiple drop colors, adjust
+the speed, add trails to the drops and more:
 
-For example: 
-
-```Dart
+```dart
 ParallaxRain(
-    dropColors: [
-        Colors.red,
-        Colors.green,
-        Colors.blue,
-        Colors.yellow,
-        Colors.brown,
-        Colors.blueGrey
-    ],
-    child: Text(
-        "Multicolor",
-    ),
+  dropColors: const [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.yellow,
+    Colors.brown,
+    Colors.blueGrey,
+  ],
+  trail: true,
+  child: const Text('Multicolor'),
 ),
 ```
 
-A full example can be found in the example directory
+A full example is in the [example](example/lib/main.dart) directory.
+
+### Parameters
+
+| Parameter | Default | Description |
+|---|---|---|
+| `child` | `null` | The widget shown in the center of the rain. |
+| `numberOfDrops` | `200` | Number of drops on screen at any moment. |
+| `dropFallSpeed` | `1` | Fall speed in logical pixels per frame at 60 fps. Drops fall at the same speed on displays with other refresh rates. |
+| `numberOfLayers` | `3` | Number of layers for the parallax effect (at least 1). Drops in nearer layers are bigger, faster and more opaque. |
+| `distanceBetweenLayers` | `1` | How much bigger and faster each layer is than the one behind it (greater than 0). |
+| `dropHeight` | `20` | Height of a drop in the furthest layer. |
+| `dropWidth` | `1` | Width of a drop in the furthest layer. |
+| `dropColors` | `[Colors.greenAccent]` | Each drop gets a random color from this list (not empty). |
+| `trail` | `false` | Whether drops fade out towards the top. |
+| `trailStartFraction` | `0.3` | Fraction of the drop's height, from the bottom, at which the trail starts to fade (0.0 to 1.0). |
+| `rainIsInBackground` | `true` | Whether the rain is painted behind (`true`) or in front of (`false`) the child. |
+
+Rebuilding a parent (for example with `setState`) doesn't reset the rain. Parameter changes take
+effect when a new `ParallaxRain` is created (for example with a new `key`).
 
 ## About me
 
