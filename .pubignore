@@ -90,3 +90,9 @@ doc/api/
 
 # Not needed by package users (old READMEs reference these by GitHub URL)
 example/screenshots/
+
+# Maintainer and agent files, not needed by package users
+AGENTS.md
+CLAUDE.md
+tasks.md
+release-please-config.json
