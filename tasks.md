@@ -13,7 +13,7 @@ _Last updated: 2026-11-10_
 
 ## Follow-ups
 - [ ] Glass PR https://github.com/Zachariah-Abraham/glass/pull/32 (changelog title and
-      order) is open and waiting for the human to merge it. The glass repo became squash-only on
+      order) is open; the glass agent merges it. The glass repo became squash-only on
       2026-11-10. Delete this item once #32 is merged.
 
 ## Decisions
