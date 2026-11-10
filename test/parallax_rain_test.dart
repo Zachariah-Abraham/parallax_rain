@@ -51,12 +51,15 @@ void main() {
     await tester.pump(const Duration(milliseconds: 16));
     final List<double> before = [for (final d in drops) d.drop.top];
 
-    // Two frames at 60 fps move a default drop (speed 1, one layer) by about 2 pixels.
-    await tester.pump(const Duration(microseconds: 33334));
+    // A default drop (speed 1, one layer) moves 1 pixel per 60 fps frame. Pump whole
+    // milliseconds: older test bindings (Flutter 2.0) round the ticker time to milliseconds.
+    const Duration step = Duration(milliseconds: 50);
+    await tester.pump(step);
+    final double expected = step.inMicroseconds / 16667;
     for (int i = 0; i < drops.length; i++) {
       final double moved = drops[i].drop.top - before[i];
       // Respawned drops jump back above the top.
-      if (moved >= 0) expect(moved, closeTo(2, 0.01));
+      if (moved >= 0) expect(moved, closeTo(expected, 0.01));
     }
   });
 
