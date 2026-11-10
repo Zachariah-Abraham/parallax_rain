@@ -9,7 +9,7 @@ _Last updated: 2026-11-10_
 
 ## Current state
 - **parallax_rain 1.1.1** is the latest release on pub.dev. `main` is at `dbe5c08` (1.1.1).
-- Branch `chore/housekeeping-and-perf` (local only, **not pushed yet**) holds the housekeeping
+- Branch `chore/housekeeping-and-perf` (pushed, PR https://github.com/Zachariah-Abraham/parallax_rain/pull/2) holds the housekeeping
   and perf work, committed in Conventional Commits:
   - Ticker-based, time-based, paint-cached painter.
   - Widget tests and a cleaned-up example.
@@ -22,15 +22,18 @@ _Last updated: 2026-11-10_
   is clean apart from the git-state warning.
 
 ## In progress: get `chore/housekeeping-and-perf` merged
-1. [ ] Human: approve pushing the branch and opening a PR. CI is the only way to verify the
-       Flutter `2.0.0` minimum (see AGENTS.md §3).
+1. [ ] Wait for CI on PR #2. It is the only way to verify the Flutter `2.0.0` minimum (see
+       AGENTS.md §3).
 2. [ ] If the `2.0.0` CI job fails, check why:
        - If 2.0.0 itself can't run on `ubuntu-latest`, or the lockfiles won't resolve there, pick
          the oldest Flutter that works. Set `flutter:` (and `sdk:` if needed) in `pubspec.yaml`
          and the CI matrix to it, and mention it in the PR / commit body.
        - If it's only an old-analyzer lint difference, fix the code.
-3. [ ] Human, one-time setup before the first automated release:
-       - Add the `RELEASE_PLEASE_TOKEN` repo secret.
+3. [ ] Human, one-time setup before the first automated release (started 2026-11-10):
+       - Add the `RELEASE_PLEASE_TOKEN` repo secret. It needs a token value that only the human
+         can create, for example a fine-grained PAT for this repo (glass has its own). Set it
+         with `gh secret set RELEASE_PLEASE_TOKEN -R Zachariah-Abraham/parallax_rain`, which
+         prompts for the value.
        - Enable automated publishing at https://pub.dev/packages/parallax_rain/admin (GitHub
          Actions, repo `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`).
        See AGENTS.md §6.
