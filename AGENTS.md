@@ -149,6 +149,9 @@ and deletion of `main`, and requires the CI checks `Analyze and test (Flutter 2.
 admins can bypass it. The required names are the CI job names, so if you rename a job or change
 the matrix (for example a new minimum), update the ruleset in the same PR (`gh api
 repos/Zachariah-Abraham/parallax_rain/rulesets/26963718`), or every PR stays blocked.
+The ruleset "Protect release tags" (id `26963913`, copied from glass) lets only repo admins
+create, move or delete `v*` tags. release-please can tag because `RELEASE_PLEASE_TOKEN` is an
+admin's token.
 
 **Tooling side effects:** `pub get` and `analyze` on a newer SDK rewrite `pubspec.lock` and
 `example/pubspec.lock`, and may add excludes to `example/analysis_options.yaml`. Don't commit
