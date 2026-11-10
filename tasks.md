@@ -12,9 +12,9 @@ _Last updated: 2026-11-10_
   automated release flow, AGENTS.md §6). The release pipeline works end to end.
 
 ## Follow-ups
-- [ ] `../glass/CHANGELOG.md` has the ordering problem that 1.1.2 had here (2.4.0 sits below
-      2.0.0+2, because there's no `# Changelog` title). Glass also still allows merge commits.
-      Fix it in the glass repo if the human wants.
+- [ ] Glass PR https://github.com/Zachariah-Abraham/glass/pull/32 (changelog title and
+      order) is open and waiting for the human to merge it. The glass repo became squash-only on
+      2026-11-10. Delete this item once #32 is merged.
 
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
