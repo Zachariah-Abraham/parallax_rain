@@ -9,6 +9,7 @@
 .history
 .svn/
 .fvm/
+*fvmrc
 
 # IntelliJ related
 *.iml
@@ -29,11 +30,16 @@
 .pub/
 build/
 
-# Compiled/built code
+# Compiled/built code and generated platform folders
 android
 ios
 windows
 web
+linux
+macos
+
+# Generated dartdoc output (pub.dev builds its own)
+doc/api/
 
 # Android related
 **/android/**/gradle-wrapper.jar
