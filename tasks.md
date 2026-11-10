@@ -5,16 +5,37 @@ another agent can continue if you're cut off. Delete finished items (git history
 `CHANGELOG.md` are the record); move lasting facts to `AGENTS.md`. Use absolute dates. See
 AGENTS.md §1.
 
-_Last updated: 2026-11-09_
+_Last updated: 2026-11-10_
 
 ## Current state
-- **parallax_rain 1.1.1** is the latest release. `pubspec.yaml`: `sdk: ">=2.12.0 <4.0.0"`,
-  `flutter: ">=1.17.0"`.
-- On Flutter 3.47.7, `flutter analyze` reports 2 issues: deprecated `withOpacity`
-  (`lib/src/parallax_rain.dart`), and `example/analysis_options.yaml` includes
-  `package:flutter_lints` without depending on it.
-- `test/parallax_rain_test.dart` is entirely commented out. No CI.
-- `AGENTS.md`, `tasks.md` and `CLAUDE.md` were added 2026-11-09 (not committed yet when written).
+- **parallax_rain 1.1.1** is the latest release on pub.dev. `main` is at `dbe5c08` (1.1.1).
+- Branch `chore/housekeeping-and-perf` (local only, **not pushed yet**) holds the housekeeping
+  and perf work, committed in Conventional Commits:
+  - Ticker-based, time-based, paint-cached painter.
+  - Widget tests and a cleaned-up example.
+  - pubspec metadata and screenshots.
+  - `.pubignore`.
+  - CI, release-please and publish workflows.
+  - README and AGENTS.md updates.
+
+  Analyze and tests pass on Flutter 3.47.7 for the root and `example/`. `pub publish --dry-run`
+  is clean apart from the git-state warning.
+
+## In progress: get `chore/housekeeping-and-perf` merged
+1. [ ] Human: approve pushing the branch and opening a PR. CI is the only way to verify the
+       Flutter `2.0.0` minimum (see AGENTS.md §3).
+2. [ ] If the `2.0.0` CI job fails, check why:
+       - If 2.0.0 itself can't run on `ubuntu-latest`, or the lockfiles won't resolve there, pick
+         the oldest Flutter that works. Set `flutter:` (and `sdk:` if needed) in `pubspec.yaml`
+         and the CI matrix to it, and mention it in the PR / commit body.
+       - If it's only an old-analyzer lint difference, fix the code.
+3. [ ] Human, one-time setup before the first automated release:
+       - Add the `RELEASE_PLEASE_TOKEN` repo secret.
+       - Enable automated publishing at https://pub.dev/packages/parallax_rain/admin (GitHub
+         Actions, repo `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`).
+       See AGENTS.md §6.
+4. [ ] After the merge, release-please should open a release PR for **1.1.2** (the `fix:`
+       commit). Check that its changelog reads well before the human merges it.
 
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
@@ -23,44 +44,21 @@ _Last updated: 2026-11-09_
   ships.
 - The 2.0.0 label is only needed if public classes (`ParallaxRainState`, `ParallaxRainPainter`,
   `Drop`) become private. Raising the SDK minimum alone is not breaking.
+- Maintainer files (`AGENTS.md`, `CLAUDE.md`, `tasks.md`, `release-please-config.json`) are
+  excluded from the published package via `.pubignore`.
 
 ## Pending (rough priority order)
 
-### 1. Bugs (patch release)
-- [ ] `runAnimation()` is an endless loop that never stops: no `dispose()`. Every removed widget
-      keeps animating. Replace it with a `Ticker` (`SingleTickerProviderStateMixin`) and dispose
-      it and the `ValueNotifier`.
-- [ ] Frame timing: `Future.delayed(Duration())` isn't vsync-based. Move drops by elapsed time
-      (keep `dropFallSpeed` meaning "pixels per frame at 60 fps" so the defaults look the same).
-- [ ] `ParallaxRain` re-declares `final Key? key`, shadowing `Widget.key`. Remove the field.
+### 1. Bugs
 - [ ] Parameter changes are ignored after the first build. Add `didUpdateWidget` that updates
       the painter's settings without resetting drops (respawned drops pick up the new values).
+      The painter's fields are `final` and public, so this needs care to stay non-breaking.
 - [ ] Drops aren't re-scattered when the size changes (rotation, window resize).
-- [ ] `trail: true` creates a new `Paint` and gradient shader per drop per frame. Reuse it, or
-      batch all drops into one `drawVertices` call (per-vertex colors give the trail gradient
-      for free).
-- [ ] Replace deprecated `withOpacity` without raising the minimum (for example `withAlpha`).
-- [ ] Fix the `flutter: ">=1.17.0"` constraint: null safety (Dart 2.12) needs Flutter 2.0, so the
-      honest lower bound is at least `>=2.0.0`.
 
 ### 2. Housekeeping
-- [ ] Add `flutter_lints` (a version that resolves on the minimum SDK) and `analysis_options.yaml`.
-      Add `flutter_lints` to `example/` dev deps too, or drop the include.
-- [ ] Write widget tests (see AGENTS.md §4 "Testing").
-- [ ] CI like `../glass/.github/workflows/ci.yml`: analyze and test on the minimum and on stable,
-      format check, `pub publish --dry-run`. Open question: can Flutter 2.0.x still run on
-      `ubuntu-latest`? If not, pick the oldest Flutter that CI can run and set the minimum to
-      that (and note it in the changelog).
-- [ ] Remove committed `doc/api/` and gitignore it. Remove tracked `example/macos/` and
-      `example/linux/` (generated), or decide to keep them.
-- [ ] Example: fix `example/pubspec.yaml` `sdk: <3.0.0`, replace the boilerplate
-      `example/test/widget_test.dart`, use `const`.
-- [ ] `pubspec.yaml`: add `repository`, `issue_tracker`, `topics`, `screenshots`; strip template
-      comments.
-- [ ] README: `flutter pub add parallax_rain` instead of `pub get`; list all parameters.
-- [ ] Optional: release-please + OIDC publishing like `../glass` (needs human setup on pub.dev
-      and a `RELEASE_PLEASE_TOKEN` secret).
 - [ ] Decide whether to make `ParallaxRainState`, `ParallaxRainPainter`, `Drop` private (major).
+      If yes, also remove the deprecated `ParallaxRainState.runAnimation`.
+- [ ] Optional: make the `ParallaxRain` constructor `const` (non-breaking, a `feat:`).
 
 ### 3. Features (ideas, not committed to)
 - [ ] Custom drop look: drop shapes (rounded, streak/line, circle) and/or a sprite `ui.Image`
