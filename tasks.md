@@ -8,37 +8,28 @@ AGENTS.md §1.
 _Last updated: 2026-11-10_
 
 ## Current state
-- **parallax_rain 1.1.1** is the latest release on pub.dev. `main` is at `dbe5c08` (1.1.1).
-- Branch `chore/housekeeping-and-perf` (pushed, PR https://github.com/Zachariah-Abraham/parallax_rain/pull/2) holds the housekeeping
-  and perf work, committed in Conventional Commits:
-  - Ticker-based, time-based, paint-cached painter.
-  - Widget tests and a cleaned-up example.
-  - pubspec metadata and screenshots.
-  - `.pubignore`.
-  - CI, release-please and publish workflows.
-  - README and AGENTS.md updates.
+- **parallax_rain 1.1.1** is the latest release on pub.dev. `main` has the housekeeping and perf
+  work (PR #2) and the Flutter 2.0 test fix (PR #4), and CI on `main` passes.
+- The `RELEASE_PLEASE_TOKEN` secret, the rulesets (AGENTS.md §3) and squash-only merges
+  (AGENTS.md §1) are set up (2026-11-10).
 
-  Analyze and tests pass on Flutter 3.47.7 for the root and `example/`. `pub publish --dry-run`
-  is clean apart from the git-state warning.
-
-## In progress: get `chore/housekeeping-and-perf` merged
-1. [ ] Wait for CI on PR #2. It is the only way to verify the Flutter `2.0.0` minimum (see
-       AGENTS.md §3).
-2. [ ] If the `2.0.0` CI job fails, check why:
-       - If 2.0.0 itself can't run on `ubuntu-latest`, or the lockfiles won't resolve there, pick
-         the oldest Flutter that works. Set `flutter:` (and `sdk:` if needed) in `pubspec.yaml`
-         and the CI matrix to it, and mention it in the PR / commit body.
-       - If it's only an old-analyzer lint difference, fix the code.
-3. [ ] Human, one-time setup before the first automated release (started 2026-11-10):
-       - Add the `RELEASE_PLEASE_TOKEN` repo secret. It needs a token value that only the human
-         can create, for example a fine-grained PAT for this repo (glass has its own). Set it
-         with `gh secret set RELEASE_PLEASE_TOKEN -R Zachariah-Abraham/parallax_rain`, which
-         prompts for the value.
-       - Enable automated publishing at https://pub.dev/packages/parallax_rain/admin (GitHub
-         Actions, repo `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`).
-       See AGENTS.md §6.
-4. [ ] After the merge, release-please should open a release PR for **1.1.2** (the `fix:`
-       commit). Check that its changelog reads well before the human merges it.
+## In progress: release 1.1.2 (PR #3)
+1. [x] On branch `release-please--branches--main--components--parallax_rain`, `CHANGELOG.md`
+       was fixed by hand:
+       - Added a `# Changelog` title. Without it, release-please inserts new entries below the
+         first `##` entry instead of at the top.
+       - Moved 1.1.2 to the top.
+       - Removed the duplicate line from the PR #2 merge commit `8ec7ec2`.
+2. [ ] Human: merge PR #3 **before anything else lands on `main`**, because release-please would
+       rebuild the branch and undo the fix. Merging tags `v1.1.2`, and `publish.yml` publishes
+       to pub.dev.
+3. [ ] Human: confirm automated publishing is enabled at
+       https://pub.dev/packages/parallax_rain/admin (GitHub Actions, repo
+       `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`). Not yet confirmed.
+       Without it the publish job fails.
+4. [ ] After the merge, check the `Publish to pub.dev` run and https://pub.dev/packages/parallax_rain.
+5. [ ] `../glass/CHANGELOG.md` has the same ordering problem (2.4.0 is below 2.0.0+2) and glass
+       still allows merge commits. Fix in the glass repo if the human wants.
 
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
