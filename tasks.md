@@ -18,13 +18,17 @@ _Last updated: 2026-11-10_
   `drops move with elapsed time` test: Flutter 2.0's test binding rounds ticker time to whole
   milliseconds (33334 µs became 33 ms, so drops moved 1.98 px instead of 2). Package code is fine.
 
-## In progress: fix the 2.0.0 CI job
-1. [x] Branch `test/whole-ms-pump`: the test now pumps 50 ms and computes the expected distance
-       from that duration. Passes on 3.47.7.
-2. [ ] Open a PR, wait for all three CI checks (2.0.0 can only be checked in CI), and have the
-       human merge it.
-3. [ ] Then check that CI on `main` is green and PR #3's changelog reads well. Only the human
-       merges PR #3.
+## In progress: fix the 2.0.0 CI job, then release 1.1.2
+1. [x] PR #4 (branch `test/whole-ms-pump`): the test now pumps 50 ms and computes the expected
+       distance from that duration. All three CI checks pass, including 2.0.0.
+2. [ ] Human: squash-merge PR #4.
+3. [ ] PR #3's changelog lists the fix twice: once from `0880de9`, and once from the body of
+       the PR #2 merge commit `8ec7ec2`. Since 2026-11-10 the repo allows only squash merges
+       (AGENTS.md §1), so this won't happen again. Once PR #4 is merged and release-please has
+       refreshed PR #3, an agent removes the duplicate `8ec7ec2` line from `CHANGELOG.md` on
+       branch `release-please--branches--main--components--parallax_rain`. The human then
+       merges PR #3 **before anything else lands on `main`**, because release-please would
+       regenerate the file and bring the line back.
 4. [ ] Human: confirm automated publishing is enabled at
        https://pub.dev/packages/parallax_rain/admin (GitHub Actions, repo
        `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`). Not yet confirmed.
