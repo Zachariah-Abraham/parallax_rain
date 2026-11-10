@@ -8,28 +8,13 @@ AGENTS.md §1.
 _Last updated: 2026-11-10_
 
 ## Current state
-- **parallax_rain 1.1.1** is the latest release on pub.dev. `main` has the housekeeping and perf
-  work (PR #2) and the Flutter 2.0 test fix (PR #4), and CI on `main` passes.
-- The `RELEASE_PLEASE_TOKEN` secret, the rulesets (AGENTS.md §3) and squash-only merges
-  (AGENTS.md §1) are set up (2026-11-10).
+- **parallax_rain 1.1.2** is the latest release on pub.dev (published 2026-11-10 through the
+  automated release flow, AGENTS.md §6). The release pipeline works end to end.
 
-## In progress: release 1.1.2 (PR #3)
-1. [x] On branch `release-please--branches--main--components--parallax_rain`, `CHANGELOG.md`
-       was fixed by hand:
-       - Added a `# Changelog` title. Without it, release-please inserts new entries below the
-         first `##` entry instead of at the top.
-       - Moved 1.1.2 to the top.
-       - Removed the duplicate line from the PR #2 merge commit `8ec7ec2`.
-2. [ ] Human: merge PR #3 **before anything else lands on `main`**, because release-please would
-       rebuild the branch and undo the fix. Merging tags `v1.1.2`, and `publish.yml` publishes
-       to pub.dev.
-3. [ ] Human: confirm automated publishing is enabled at
-       https://pub.dev/packages/parallax_rain/admin (GitHub Actions, repo
-       `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`). Not yet confirmed.
-       Without it the publish job fails.
-4. [ ] After the merge, check the `Publish to pub.dev` run and https://pub.dev/packages/parallax_rain.
-5. [ ] `../glass/CHANGELOG.md` has the same ordering problem (2.4.0 is below 2.0.0+2) and glass
-       still allows merge commits. Fix in the glass repo if the human wants.
+## Follow-ups
+- [ ] `../glass/CHANGELOG.md` has the ordering problem that 1.1.2 had here (2.4.0 sits below
+      2.0.0+2, because there's no `# Changelog` title). Glass also still allows merge commits.
+      Fix it in the glass repo if the human wants.
 
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
