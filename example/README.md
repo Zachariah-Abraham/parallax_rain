@@ -1,16 +1,12 @@
-# example
+# parallax_rain example
 
-A new Flutter project. Be sure to run `flutter create .` to generate the android, ios, windows, web etc. files.
+Four `ParallaxRain` variants in a 2x2 grid: multicolor (with a `setState` counter, to show that
+rebuilding the parent doesn't reset the rain), multicolor with trails, blue-grey with trails, and
+fast blue-grey with trails.
 
-## Getting Started
+Platform folders aren't committed. Generate the one you need, then run:
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter create --platforms=macos .   # or android, ios, linux, windows, web
+flutter run
+```
