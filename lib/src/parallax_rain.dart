@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 // TODO: Allow custom positioning of the child widget (is only center at the moment)
 
 /// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
   ParallaxRain(
-      {this.key,
+      {Key? key,
       this.numberOfDrops = 200,
       this.dropFallSpeed = 1,
       this.numberOfLayers = 3,
@@ -24,12 +26,11 @@ class ParallaxRain extends StatefulWidget {
             "The distance between layers cannot be 0, try setting the number of layers to 1 instead"),
         super(key: key);
 
-  final Key? key;
-
   /// Number of drops on screen at any moment
   final int numberOfDrops;
 
-  /// Speed at which a drop falls in the vertical direction per frame
+  /// Speed at which a drop falls in the vertical direction, in logical pixels per frame at 60 frames
+  /// per second. Drops fall at the same speed on displays with other refresh rates.
   final double dropFallSpeed;
 
   /// Number of layers for the parallax effect
@@ -65,21 +66,28 @@ class ParallaxRain extends StatefulWidget {
   }
 }
 
-class ParallaxRainState extends State<ParallaxRain> {
+class ParallaxRainState extends State<ParallaxRain>
+    with SingleTickerProviderStateMixin {
+  /// Changes every frame to repaint [parallaxRainPainter].
   final ValueNotifier notifier = ValueNotifier(false);
-  late final parallaxRainPainter;
+  late final ParallaxRainPainter parallaxRainPainter;
+  Ticker? _ticker;
 
-  runAnimation() async {
-    while (true) {
-      notifier.value = !notifier.value;
-      await Future.delayed(Duration());
-    }
+  /// Starts the animation. It starts automatically, so there's no need to call this.
+  @Deprecated(
+      'The animation starts automatically. This will be removed in a future release.')
+  void runAnimation() {
+    _ticker ??= createTicker(_onTick)..start();
+  }
+
+  void _onTick(Duration elapsed) {
+    parallaxRainPainter._elapsed = elapsed;
+    notifier.value = !notifier.value;
   }
 
   @override
   void initState() {
     super.initState();
-    runAnimation();
     parallaxRainPainter = ParallaxRainPainter(
       numberOfDrops: widget.numberOfDrops,
       dropFallSpeed: widget.dropFallSpeed,
@@ -92,6 +100,15 @@ class ParallaxRainState extends State<ParallaxRain> {
       distanceBetweenLayers: widget.distanceBetweenLayers,
       notifier: notifier,
     );
+    // ignore: deprecated_member_use_from_same_package
+    runAnimation();
+  }
+
+  @override
+  void dispose() {
+    _ticker?.dispose();
+    notifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -109,6 +126,12 @@ class ParallaxRainState extends State<ParallaxRain> {
   }
 }
 
+/// The duration of one frame at 60 frames per second, the unit of [ParallaxRain.dropFallSpeed].
+const Duration _referenceFrame = Duration(microseconds: 16667);
+
+/// Drops move at most this many reference frames per paint, so they don't jump after a pause.
+const double _maxFramesPerPaint = 6;
+
 class ParallaxRainPainter extends CustomPainter {
   final int numberOfDrops;
   // final Size parentSize;
@@ -124,7 +147,16 @@ class ParallaxRainPainter extends CustomPainter {
   final double trailStartFraction;
   final double distanceBetweenLayers;
   late final ValueNotifier notifier;
-  Random random = new Random();
+  Random random = Random();
+
+  /// Animation time, set by [ParallaxRainState] every frame. While it is null (when the painter is
+  /// used on its own), drops move one reference frame per paint.
+  Duration? _elapsed;
+  Duration? _lastPaintElapsed;
+
+  /// Paints per drop color and layer, created on first use. For trails the shader is in the drop's
+  /// local coordinates, so the same paint works for every drop of that color and layer.
+  final Map<Color, List<Paint?>> _paints = <Color, List<Paint?>>{};
 
   ParallaxRainPainter({
     // required this.parentSize,
@@ -144,28 +176,68 @@ class ParallaxRainPainter extends CustomPainter {
     paintObject = Paint()
       ..color = dropColors[0]
       ..style = PaintingStyle.fill;
-    double effectiveLayer;
-    for (int i = 0; i < this.numberOfDrops; i++) {
-      double x = random.nextDouble() * size.width;
-      double y = random.nextDouble() * size.height;
+    dropSize = Size(dropWidth, dropHeight);
+    for (int i = 0; i < numberOfDrops; i++) {
       // Keeping [widget.numberOfLayers] layers for the parallax effect, the base values are for the layer furthest behind
-      int layerNumber =
-          random.nextInt(numberOfLayers); // 0 is the layer furthest behind
-      effectiveLayer = layerNumber * distanceBetweenLayers;
-      dropSize = new Size(dropWidth, dropHeight);
-      dropList.add(
-        new Drop(
-            drop: Offset(x, y) &
-                Size(
-                  dropSize.width + (dropSize.width * effectiveLayer),
-                  dropSize.height + (dropSize.height * effectiveLayer),
-                ),
-            dropSpeed:
-                this.dropFallSpeed + (this.dropFallSpeed * effectiveLayer),
-            dropLayer: layerNumber,
-            dropColor: dropColors[random.nextInt(dropColors.length)]),
-      );
+      final drop = Drop(
+          drop: Rect.zero,
+          dropSpeed: 0,
+          dropLayer: 0,
+          dropColor: dropColors[0]);
+      _respawn(drop, size, top: random.nextDouble() * size.height);
+      dropList.add(drop);
     }
+  }
+
+  /// Gives [drop] a random x position, layer and color. Its top is at [top], or just above the
+  /// canvas if [top] is null.
+  void _respawn(Drop drop, Size size, {double? top}) {
+    final double x = random.nextDouble() * size.width;
+    final int layer =
+        random.nextInt(numberOfLayers); // 0 is the layer furthest behind
+    final double scale = 1 + layer * distanceBetweenLayers;
+    final double height = dropSize.height * scale;
+    drop.drop =
+        Rect.fromLTWH(x, top ?? -height, dropSize.width * scale, height);
+    drop.dropSpeed = dropFallSpeed * scale;
+    drop.dropLayer = layer;
+    drop.dropColor = dropColors[random.nextInt(dropColors.length)];
+  }
+
+  /// How many reference frames the drops move in this paint.
+  double _framesSinceLastPaint() {
+    final Duration? elapsed = _elapsed;
+    if (elapsed == null) return 1;
+    final Duration? last = _lastPaintElapsed;
+    _lastPaintElapsed = elapsed;
+    if (last == null) return 1;
+    final double frames =
+        (elapsed - last).inMicroseconds / _referenceFrame.inMicroseconds;
+    return frames.clamp(0.0, _maxFramesPerPaint);
+  }
+
+  Paint _paintFor(Drop drop) {
+    final List<Paint?> byLayer = _paints.putIfAbsent(
+        drop.dropColor, () => List<Paint?>.filled(numberOfLayers, null));
+    final int layer = drop.dropLayer;
+    return byLayer[layer] ??= _createPaint(drop);
+  }
+
+  Paint _createPaint(Drop drop) {
+    final Color color = drop.dropColor
+        .withAlpha((255.0 * (drop.dropLayer + 1) / numberOfLayers).round());
+    if (!trail) {
+      return Paint()
+        ..color = color
+        ..style = PaintingStyle.fill;
+    }
+    return Paint()
+      ..shader = LinearGradient(
+        stops: [trailStartFraction, 1.0],
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+        colors: [color, Colors.transparent],
+      ).createShader(Offset.zero & drop.drop.size);
   }
 
   @override
@@ -173,44 +245,26 @@ class ParallaxRainPainter extends CustomPainter {
     if (dropList.isEmpty) {
       initialize(canvas, size);
     }
-    double effectiveLayer;
-    for (int i = 0; i < this.numberOfDrops; i++) {
-      if (dropList[i].drop.top + dropList[i].dropSpeed < size.height) {
-        dropList[i].drop = Offset(dropList[i].drop.left,
-                dropList[i].drop.top + dropList[i].dropSpeed) &
-            dropList[i].drop.size;
+    final double frames = _framesSinceLastPaint();
+    for (int i = 0; i < numberOfDrops; i++) {
+      final Drop drop = dropList[i];
+      final double distance = drop.dropSpeed * frames;
+      if (drop.drop.top + distance < size.height) {
+        drop.drop = drop.drop.translate(0, distance);
       } else {
-        int layer = random.nextInt(numberOfLayers);
-        effectiveLayer = layer * distanceBetweenLayers;
-        dropList[i].drop = Offset(random.nextDouble() * size.width,
-                -(dropSize.height + (dropSize.height * effectiveLayer))) &
-            Size(dropSize.width + (dropSize.width * effectiveLayer),
-                dropSize.height + (dropSize.height * effectiveLayer));
-        dropList[i].dropSpeed =
-            this.dropFallSpeed + (this.dropFallSpeed * effectiveLayer);
-        dropList[i].dropLayer = layer;
-        dropList[i].dropColor = dropColors[random.nextInt(dropColors.length)];
+        _respawn(drop, size);
       }
 
-      paintObject.color = dropList[i]
-          .dropColor
-          .withOpacity(((dropList[i].dropLayer + 1) / numberOfLayers));
-
       // draw drop
-      canvas.drawRect(
-        dropList[i].drop,
-        (trail)
-            ? (Paint()
-              ..shader = LinearGradient(
-                stops: [trailStartFraction, 1.0],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [paintObject.color, Colors.transparent],
-              ).createShader(
-                dropList[i].drop,
-              ))
-            : paintObject,
-      );
+      final Paint paint = _paintFor(drop);
+      if (trail) {
+        canvas.save();
+        canvas.translate(drop.drop.left, drop.drop.top);
+        canvas.drawRect(Offset.zero & drop.drop.size, paint);
+        canvas.restore();
+      } else {
+        canvas.drawRect(drop.drop, paint);
+      }
     }
   }
 
