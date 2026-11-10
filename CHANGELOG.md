@@ -2,6 +2,14 @@
 
 * Relaxed SDK constraints.
 
+## [1.1.2](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.1...v1.1.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* stop the animation on dispose and use frame-rate independent speed ([8ec7ec2](https://github.com/Zachariah-Abraham/parallax_rain/commit/8ec7ec255931d07e6059b8eab3ef9ba70dc4531d))
+* stop the animation on dispose and use frame-rate independent speed ([0880de9](https://github.com/Zachariah-Abraham/parallax_rain/commit/0880de981226e0c46f11c3ac8d28b2f36ce2cc21))
+
 ## 1.1.0
 
 * The ParallaxRain widget's painter will now ignore state changes so the rain doesn't reset every time setState is called. (unless you instantiate a new ParallaxRain widget on purpose).
