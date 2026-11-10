@@ -2,25 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:parallax_rain/parallax_rain.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Parallax Rain',
       theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -29,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Key parallaxThree = GlobalKey();
   final Key parallaxFour = GlobalKey();
   int counter = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: ParallaxRain(
                     key: parallaxOne,
-                    dropColors: [
+                    dropColors: const [
                       Colors.red,
                       Colors.green,
                       Colors.blue,
@@ -55,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextButton(
                         child: Text(
                           "Multicolor with setState (press here): $counter",
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         onPressed: () {
                           setState(() {
@@ -69,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: ParallaxRain(
                     key: parallaxTwo,
-                    dropColors: [
+                    dropColors: const [
                       Colors.red,
                       Colors.green,
                       Colors.blue,
@@ -78,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Colors.blueGrey
                     ],
                     trail: true,
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Multicolor Trail",
                       ),
@@ -95,9 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: ParallaxRain(
                     key: parallaxThree,
-                    dropColors: [Colors.blueGrey],
+                    dropColors: const [Colors.blueGrey],
                     trail: true,
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "BlueGrey Trail",
                       ),
@@ -107,10 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: ParallaxRain(
                     key: parallaxFour,
-                    dropColors: [Colors.blueGrey],
+                    dropColors: const [Colors.blueGrey],
                     trail: true,
                     dropFallSpeed: 5,
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "BlueGrey Trail Fast",
                       ),
