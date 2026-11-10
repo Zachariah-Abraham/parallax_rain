@@ -1,3 +1,12 @@
+# Changelog
+
+## [1.1.2](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.1...v1.1.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* stop the animation on dispose and use frame-rate independent speed ([0880de9](https://github.com/Zachariah-Abraham/parallax_rain/commit/0880de981226e0c46f11c3ac8d28b2f36ce2cc21))
+
 ## 1.1.1
 
 * Relaxed SDK constraints.

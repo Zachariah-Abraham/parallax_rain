@@ -8,30 +8,28 @@ AGENTS.md §1.
 _Last updated: 2026-11-10_
 
 ## Current state
-- **parallax_rain 1.1.1** is the latest release on pub.dev. The housekeeping and perf work
-  (PR #2) was merged into `main` on 2026-11-10.
-- Done on 2026-11-10: the `RELEASE_PLEASE_TOKEN` secret is set (glass and parallax_rain), and the
-  rulesets "Protect main" and "Protect release tags" exist (AGENTS.md §3).
-- release-please opened **PR #3 "chore(main): release 1.1.2"**. **Don't merge it** until CI on
-  `main` is green.
-- CI on `main` after the merge: stable and web passed. The **Flutter 2.0.0** job failed in the
-  `drops move with elapsed time` test: Flutter 2.0's test binding rounds ticker time to whole
-  milliseconds (33334 µs became 33 ms, so drops moved 1.98 px instead of 2). Package code is fine.
+- **parallax_rain 1.1.1** is the latest release on pub.dev. `main` has the housekeeping and perf
+  work (PR #2) and the Flutter 2.0 test fix (PR #4), and CI on `main` passes.
+- The `RELEASE_PLEASE_TOKEN` secret, the rulesets (AGENTS.md §3) and squash-only merges
+  (AGENTS.md §1) are set up (2026-11-10).
 
-## In progress: fix the 2.0.0 CI job, then release 1.1.2
-1. [x] PR #4 (branch `test/whole-ms-pump`): the test now pumps 50 ms and computes the expected
-       distance from that duration. All three CI checks pass, including 2.0.0.
-2. [ ] Human: squash-merge PR #4.
-3. [ ] PR #3's changelog lists the fix twice: once from `0880de9`, and once from the body of
-       the PR #2 merge commit `8ec7ec2`. Since 2026-11-10 the repo allows only squash merges
-       (AGENTS.md §1), so this won't happen again. Once PR #4 is merged and release-please has
-       refreshed PR #3, an agent removes the duplicate `8ec7ec2` line from `CHANGELOG.md` on
-       branch `release-please--branches--main--components--parallax_rain`. The human then
-       merges PR #3 **before anything else lands on `main`**, because release-please would
-       regenerate the file and bring the line back.
-4. [ ] Human: confirm automated publishing is enabled at
+## In progress: release 1.1.2 (PR #3)
+1. [x] On branch `release-please--branches--main--components--parallax_rain`, `CHANGELOG.md`
+       was fixed by hand:
+       - Added a `# Changelog` title. Without it, release-please inserts new entries below the
+         first `##` entry instead of at the top.
+       - Moved 1.1.2 to the top.
+       - Removed the duplicate line from the PR #2 merge commit `8ec7ec2`.
+2. [ ] Human: merge PR #3 **before anything else lands on `main`**, because release-please would
+       rebuild the branch and undo the fix. Merging tags `v1.1.2`, and `publish.yml` publishes
+       to pub.dev.
+3. [ ] Human: confirm automated publishing is enabled at
        https://pub.dev/packages/parallax_rain/admin (GitHub Actions, repo
        `Zachariah-Abraham/parallax_rain`, tag pattern `v{{version}}`). Not yet confirmed.
+       Without it the publish job fails.
+4. [ ] After the merge, check the `Publish to pub.dev` run and https://pub.dev/packages/parallax_rain.
+5. [ ] `../glass/CHANGELOG.md` has the same ordering problem (2.4.0 is below 2.0.0+2) and glass
+       still allows merge commits. Fix in the glass repo if the human wants.
 
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
