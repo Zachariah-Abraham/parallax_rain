@@ -84,6 +84,47 @@ void main() {
     expect(drops, hasLength(200));
   });
 
+  testWidgets('new settings apply to the existing drops without resetting them',
+      (tester) async {
+    Widget rain({int drops = 50, int layers = 3, List<Color>? colors}) =>
+        _app(SizedBox.expand(
+          child: ParallaxRain(
+            numberOfDrops: drops,
+            numberOfLayers: layers,
+            dropColors: colors ?? const [Colors.red],
+          ),
+        ));
+    await tester.pumpWidget(rain());
+    final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
+    final List<Offset> positions = [for (final d in drops) d.drop.topLeft];
+
+    await tester.pumpWidget(rain(layers: 1, colors: const [Colors.blue]));
+    final ParallaxRainPainter painter = _state(tester).parallaxRainPainter;
+    expect(painter.numberOfLayers, 1);
+    expect(painter.dropList, same(drops));
+    for (int i = 0; i < drops.length; i++) {
+      // The rebuild paints once, which moves each drop by at most one frame. Respawned drops
+      // jump back above the top.
+      final double moved = drops[i].drop.top - positions[i].dy;
+      if (moved >= 0) {
+        expect(moved, lessThanOrEqualTo(3.01));
+        expect(drops[i].drop.left, positions[i].dx);
+      }
+      expect(drops[i].dropLayer, 0);
+      expect(drops[i].dropColor, Colors.blue);
+      expect(drops[i].drop.width, closeTo(1, 1e-9));
+      expect(drops[i].drop.height, closeTo(20, 1e-9));
+      expect(drops[i].dropSpeed, 1);
+    }
+
+    await tester.pumpWidget(rain(drops: 80, layers: 1));
+    expect(_state(tester).parallaxRainPainter.dropList, hasLength(80));
+    await tester.pumpWidget(rain(drops: 10, layers: 1));
+    expect(_state(tester).parallaxRainPainter.dropList, hasLength(10));
+    await tester.pump(const Duration(milliseconds: 16));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('works inside Row and Column (unbounded constraints)',
       (tester) async {
     await tester.pumpWidget(_app(Column(children: [

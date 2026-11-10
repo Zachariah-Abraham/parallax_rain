@@ -93,9 +93,11 @@ reference for conventions that already work (CI, release-please, shaders, golden
   (`_elapsed`) and flips a `ValueNotifier`; the painter repaints on it (`super(repaint:
   notifier)`). `dispose()` disposes the ticker and the notifier. `runAnimation()` is deprecated
   (it only starts the ticker, which `initState()` already does). Remove it in the next major.
-- The painter is created once, so later changes to the widget's parameters are ignored. This was
-  intentional in 1.1.0 so that a parent's `setState` doesn't reset the rain. Keep that property
-  (drops must not reset on rebuild) when changing this.
+- When a painter setting changes (`didUpdateWidget`), the state creates a new painter that takes
+  over the old one's drops (`ParallaxRainPainter._takeOver`). Drops keep their positions and get
+  the new size, speed, layer (if out of range) and color (if no longer in `dropColors`); extra
+  drops are removed and missing ones are scattered on the next paint. A parent `setState` with
+  unchanged settings keeps the same painter. Drops must never reset on rebuild (1.1.0).
 - `build()` returns `ClipRect > CustomPaint(painter or foregroundPainter) > Container > child`.
   The widget sizes itself to its child (1.0.2). Unbounded constraints (inside a `Row`/`Column`)
   must not stop the rain (1.0.4 fix).
