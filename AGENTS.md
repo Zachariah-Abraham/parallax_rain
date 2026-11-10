@@ -40,6 +40,11 @@ learn the current state from the repo alone. So:
   `refactor:`, `perf:` (no release). Example: `fix: stop the animation loop on dispose`.
   release-please builds `CHANGELOG.md` and the version bump from these subjects (§6), so write
   `feat:`/`fix:` subjects for users: they appear verbatim in the changelog on pub.dev.
+- **PRs are squash-merged** (the repo allows nothing else, set 2026-11-10). The squash commit's
+  subject is the PR title and its body is blank, so **the PR title is the changelog entry**:
+  give every PR a Conventional Commit title written for users. Commits inside the branch don't
+  reach the changelog. (Merge commits were turned off because their body repeated the PR title,
+  and release-please listed the fix twice.)
 - Work on `main` only if the human asks you to. Otherwise use a feature branch. Never force-push,
   rewrite published history, or run `flutter pub publish` without explicit human approval.
 
