@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.3](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.2...v1.1.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* apply new ParallaxRain settings after the first build ([#7](https://github.com/Zachariah-Abraham/parallax_rain/issues/7)) ([11b224b](https://github.com/Zachariah-Abraham/parallax_rain/commit/11b224b83d02efcba29d69bc967508a025a7dfbf))
+* keep the rain spread over the area when its size changes ([#8](https://github.com/Zachariah-Abraham/parallax_rain/issues/8)) ([63a8c52](https://github.com/Zachariah-Abraham/parallax_rain/commit/63a8c5293fb3314e3ede63ad1d1582196e914207))
+* stop importing the deprecated Material library ([#10](https://github.com/Zachariah-Abraham/parallax_rain/issues/10)) ([3ff1265](https://github.com/Zachariah-Abraham/parallax_rain/commit/3ff1265a3c8f2ce98236556ac2b15d3cb06886eb))
+
 ## [1.1.2](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.1...v1.1.2) (2026-11-10)
 
 
