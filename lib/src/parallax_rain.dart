@@ -1,8 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/scheduler.dart';
+
+/// The default drop color, Material's `Colors.greenAccent`. The package doesn't import the Material
+/// library.
+const Color _greenAccent = Color(0xFF69F0AE);
 
 // TODO: Allow custom positioning of the child widget (is only center at the moment)
 
@@ -15,7 +19,7 @@ class ParallaxRain extends StatefulWidget {
       this.numberOfLayers = 3,
       this.dropHeight = 20,
       this.dropWidth = 1,
-      this.dropColors = const [Colors.greenAccent],
+      this.dropColors = const [_greenAccent],
       this.trailStartFraction = 0.3,
       this.distanceBetweenLayers = 1,
       this.child,
@@ -43,7 +47,8 @@ class ParallaxRain extends StatefulWidget {
   /// Width of each drop
   final double dropWidth;
 
-  /// Color of each drop
+  /// Colors of the drops. Each drop gets a random color from this list. Defaults to green
+  /// (`Colors.greenAccent`, `Color(0xFF69F0AE)`).
   final List<Color> dropColors;
 
   /// Fraction of the drop at which the trail effect begins, value ranges from 0.0 to 1.0
@@ -289,7 +294,7 @@ class ParallaxRainPainter extends CustomPainter {
         stops: [trailStartFraction, 1.0],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
-        colors: [color, Colors.transparent],
+        colors: [color, const Color(0x00000000)],
       ).createShader(Offset.zero & drop.drop.size);
   }
 

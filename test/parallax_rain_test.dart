@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:parallax_rain/parallax_rain.dart';
 
-Widget _app(Widget child) => MaterialApp(home: Scaffold(body: child));
+Widget _app(Widget child) =>
+    Directionality(textDirection: TextDirection.ltr, child: child);
+
+const Color _red = Color(0xFFFF0000);
+const Color _blue = Color(0xFF0000FF);
 
 CustomPaint _rainPaint(WidgetTester tester) => tester.widget<CustomPaint>(
       find.descendant(
@@ -23,7 +27,7 @@ void main() {
     expect(painter.dropList, hasLength(200));
     for (final Drop drop in painter.dropList) {
       expect(drop.dropLayer, inInclusiveRange(0, 2));
-      expect(drop.dropColor, Colors.greenAccent);
+      expect(drop.dropColor, const Color(0xFF69F0AE));
     }
   });
 
@@ -91,14 +95,14 @@ void main() {
           child: ParallaxRain(
             numberOfDrops: drops,
             numberOfLayers: layers,
-            dropColors: colors ?? const [Colors.red],
+            dropColors: colors ?? const [_red],
           ),
         ));
     await tester.pumpWidget(rain());
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
     final List<Offset> positions = [for (final d in drops) d.drop.topLeft];
 
-    await tester.pumpWidget(rain(layers: 1, colors: const [Colors.blue]));
+    await tester.pumpWidget(rain(layers: 1, colors: const [_blue]));
     final ParallaxRainPainter painter = _state(tester).parallaxRainPainter;
     expect(painter.numberOfLayers, 1);
     expect(painter.dropList, same(drops));
@@ -111,7 +115,7 @@ void main() {
         expect(drops[i].drop.left, positions[i].dx);
       }
       expect(drops[i].dropLayer, 0);
-      expect(drops[i].dropColor, Colors.blue);
+      expect(drops[i].dropColor, _blue);
       expect(drops[i].drop.width, closeTo(1, 1e-9));
       expect(drops[i].drop.height, closeTo(20, 1e-9));
       expect(drops[i].dropSpeed, 1);
@@ -153,7 +157,7 @@ void main() {
     int taps = 0;
     await tester.pumpWidget(_app(ParallaxRain(
       rainIsInBackground: false,
-      child: TextButton(onPressed: () => taps++, child: const Text('tap')),
+      child: GestureDetector(onTap: () => taps++, child: const Text('tap')),
     )));
 
     await tester.tap(find.text('tap'));
