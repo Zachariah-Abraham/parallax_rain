@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -70,7 +71,7 @@ class ParallaxRainState extends State<ParallaxRain>
     with SingleTickerProviderStateMixin {
   /// Changes every frame to repaint [parallaxRainPainter].
   final ValueNotifier notifier = ValueNotifier(false);
-  late final ParallaxRainPainter parallaxRainPainter;
+  late ParallaxRainPainter parallaxRainPainter;
   Ticker? _ticker;
 
   /// Starts the animation. It starts automatically, so there's no need to call this.
@@ -88,7 +89,13 @@ class ParallaxRainState extends State<ParallaxRain>
   @override
   void initState() {
     super.initState();
-    parallaxRainPainter = ParallaxRainPainter(
+    parallaxRainPainter = _createPainter();
+    // ignore: deprecated_member_use_from_same_package
+    runAnimation();
+  }
+
+  ParallaxRainPainter _createPainter() {
+    return ParallaxRainPainter(
       numberOfDrops: widget.numberOfDrops,
       dropFallSpeed: widget.dropFallSpeed,
       numberOfLayers: widget.numberOfLayers,
@@ -100,8 +107,24 @@ class ParallaxRainState extends State<ParallaxRain>
       distanceBetweenLayers: widget.distanceBetweenLayers,
       notifier: notifier,
     );
-    // ignore: deprecated_member_use_from_same_package
-    runAnimation();
+  }
+
+  @override
+  void didUpdateWidget(ParallaxRain oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final ParallaxRain w = widget;
+    if (w.numberOfDrops != oldWidget.numberOfDrops ||
+        w.dropFallSpeed != oldWidget.dropFallSpeed ||
+        w.numberOfLayers != oldWidget.numberOfLayers ||
+        w.dropHeight != oldWidget.dropHeight ||
+        w.dropWidth != oldWidget.dropWidth ||
+        !listEquals(w.dropColors, oldWidget.dropColors) ||
+        w.trailStartFraction != oldWidget.trailStartFraction ||
+        w.distanceBetweenLayers != oldWidget.distanceBetweenLayers ||
+        w.trail != oldWidget.trail) {
+      // A new painter with the new settings takes over the drops, so the rain doesn't reset.
+      parallaxRainPainter = _createPainter().._takeOver(parallaxRainPainter);
+    }
   }
 
   @override
@@ -172,12 +195,13 @@ class ParallaxRainPainter extends CustomPainter {
     required this.notifier,
   }) : super(repaint: notifier);
 
+  /// Scatters drops randomly over the canvas until there are [numberOfDrops].
   void initialize(Canvas canvas, Size size) {
     paintObject = Paint()
       ..color = dropColors[0]
       ..style = PaintingStyle.fill;
     dropSize = Size(dropWidth, dropHeight);
-    for (int i = 0; i < numberOfDrops; i++) {
+    while (dropList.length < numberOfDrops) {
       // Keeping [widget.numberOfLayers] layers for the parallax effect, the base values are for the layer furthest behind
       final drop = Drop(
           drop: Rect.zero,
@@ -186,6 +210,35 @@ class ParallaxRainPainter extends CustomPainter {
           dropColor: dropColors[0]);
       _respawn(drop, size, top: random.nextDouble() * size.height);
       dropList.add(drop);
+    }
+  }
+
+  /// Takes over the drops of [old], the painter this one replaces, and applies this painter's
+  /// settings to them while keeping their positions.
+  void _takeOver(ParallaxRainPainter old) {
+    _elapsed = old._elapsed;
+    _lastPaintElapsed = old._lastPaintElapsed;
+    if (old.dropList.isEmpty) return;
+    dropSize = Size(dropWidth, dropHeight);
+    paintObject = Paint()
+      ..color = dropColors[0]
+      ..style = PaintingStyle.fill;
+    dropList = old.dropList;
+    if (dropList.length > numberOfDrops) {
+      dropList.removeRange(numberOfDrops, dropList.length);
+    }
+    // Missing drops are added on the next paint, which knows the canvas size.
+    for (final Drop drop in dropList) {
+      if (drop.dropLayer >= numberOfLayers) {
+        drop.dropLayer = random.nextInt(numberOfLayers);
+      }
+      if (!dropColors.contains(drop.dropColor)) {
+        drop.dropColor = dropColors[random.nextInt(dropColors.length)];
+      }
+      final double scale = 1 + drop.dropLayer * distanceBetweenLayers;
+      drop.drop = Rect.fromLTWH(drop.drop.left, drop.drop.top,
+          dropSize.width * scale, dropSize.height * scale);
+      drop.dropSpeed = dropFallSpeed * scale;
     }
   }
 
@@ -242,7 +295,7 @@ class ParallaxRainPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (dropList.isEmpty) {
+    if (dropList.length < numberOfDrops) {
       initialize(canvas, size);
     }
     final double frames = _framesSinceLastPaint();

@@ -24,9 +24,6 @@ _Last updated: 2026-11-10_
 ## Pending (rough priority order)
 
 ### 1. Bugs
-- [ ] Parameter changes are ignored after the first build. Add `didUpdateWidget` that updates
-      the painter's settings without resetting drops (respawned drops pick up the new values).
-      The painter's fields are `final` and public, so this needs care to stay non-breaking.
 - [ ] Drops aren't re-scattered when the size changes (rotation, window resize).
 
 ### 2. Housekeeping
