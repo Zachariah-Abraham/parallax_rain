@@ -157,7 +157,7 @@ void main() {
   Widget motionApp({
     required bool reduceMotion,
     double speed = 1,
-    bool respect = true,
+    bool? override,
   }) =>
       _app(MediaQuery(
         data: MediaQueryData(disableAnimations: reduceMotion),
@@ -166,7 +166,7 @@ void main() {
             numberOfDrops: 50,
             numberOfLayers: 1,
             dropFallSpeed: speed,
-            respectReducedMotion: respect,
+            reducedMotion: override,
           ),
         ),
       ));
@@ -186,10 +186,14 @@ void main() {
     expect(tester.binding.hasScheduledFrame, isFalse);
   });
 
-  testWidgets('respectReducedMotion: false keeps the rain moving',
-      (tester) async {
-    await tester.pumpWidget(motionApp(reduceMotion: true, respect: false));
+  testWidgets('reducedMotion: false keeps the rain moving', (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: true, override: false));
     expect(tester.binding.transientCallbackCount, greaterThan(0));
+  });
+
+  testWidgets('reducedMotion: true holds the rain still', (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: false, override: true));
+    expect(tester.binding.transientCallbackCount, 0);
   });
 
   testWidgets('the rain stops and resumes with the reduced motion setting',

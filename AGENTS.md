@@ -112,7 +112,7 @@ reference for conventions that already work (CI, release-please, shaders, golden
   don't jump after a pause. Without ticker time (painter used on its own), drops move one frame
   per paint.
 - The `Ticker` runs only while `_shouldAnimate` (`dropFallSpeed != 0` and not reduced motion with
-  `respectReducedMotion`). `_syncTicker()` starts/stops it from `didChangeDependencies` and
+  `reducedMotion ?? device setting`). `_syncTicker()` starts/stops it from `didChangeDependencies` and
   `didUpdateWidget`, and sets the painter's `_frozen` so other repaints (resize) don't move drops.
   Reduced motion is read with `dependOnInheritedWidgetOfExactType<MediaQuery>()` because
   `MediaQuery.disableAnimationsOf` doesn't exist on Flutter 2.0 (the minimum).
@@ -213,9 +213,10 @@ those incidental changes as part of unrelated work. Either revert them
 
 ### Accessibility
 - The rain is decorative and must not change the child's semantics or hit testing.
-- Reduced motion is supported through `respectReducedMotion` (default `true`). This is a
-  deliberate exception to the "keep today's defaults" rule in §4, because it only changes
-  rendering for users who turned on reduce-motion.
+- Reduced motion is supported through `reducedMotion` (`bool?`, default `null` = follow the
+  device). This is a deliberate exception to the "keep today's defaults" rule in §4, because it
+  only changes rendering for users who turned on reduce-motion. The device decides the default,
+  the dev can override it either way.
 
 ### Testing
 - Every behavior change needs **widget tests** in `test/` using `flutter_test`. Useful checks:

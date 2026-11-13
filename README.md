@@ -58,7 +58,7 @@ A full example is in the [example](example/lib/main.dart) directory.
 | `dropColors` | `[Colors.greenAccent]` | Each drop gets a random color from this list (not empty). |
 | `trail` | `false` | Whether drops fade out towards the top. |
 | `trailStartFraction` | `0.3` | Fraction of the drop's height, from the bottom, at which the trail starts to fade (0.0 to 1.0). |
-| `respectReducedMotion` | `true` | Whether the rain stops moving when the system asks for reduced motion (`MediaQueryData.disableAnimations`). The drops stay visible where they are. |
+| `reducedMotion` | `null` | Whether to hold the rain still. `null` follows the device: the rain stops when the system asks for reduced motion (`MediaQueryData.disableAnimations`). `true` always holds it still, `false` always keeps it moving. The drops stay visible where they are. |
 | `rainIsInBackground` | `true` | Whether the rain is painted behind (`true`) or in front of (`false`) the child. |
 
 Rebuilding a parent (for example with `setState`) doesn't reset the rain. Parameter changes take

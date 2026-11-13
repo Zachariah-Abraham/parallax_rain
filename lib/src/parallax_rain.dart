@@ -25,7 +25,7 @@ class ParallaxRain extends StatefulWidget {
       this.child,
       this.rainIsInBackground = true,
       this.trail = false,
-      this.respectReducedMotion = true})
+      this.reducedMotion})
       : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
         assert(dropColors.isNotEmpty, "The drop colors list cannot be empty"),
         assert(distanceBetweenLayers > 0,
@@ -61,12 +61,15 @@ class ParallaxRain extends StatefulWidget {
   /// Distance between each layer
   final double distanceBetweenLayers;
 
-  /// Whether the rain stops moving when the user has asked the system for reduced motion
-  /// (`MediaQueryData.disableAnimations`). The drops stay where they are, and nothing is repainted
-  /// until the setting is turned off. Defaults to true.
+  /// Whether the rain is held still. The drops stay where they are, and nothing is repainted
+  /// while this is true.
   ///
-  /// Set a [dropFallSpeed] of 0 to freeze the rain yourself. The animation is stopped then too.
-  final bool respectReducedMotion;
+  /// When null (the default), it follows the device: the rain stops when the user has asked the
+  /// system for reduced motion (`MediaQueryData.disableAnimations`). Pass false to keep the rain
+  /// moving regardless, or true to hold it still regardless.
+  ///
+  /// Set a [dropFallSpeed] of 0 to freeze the rain too. The animation is stopped then as well.
+  final bool? reducedMotion;
 
   /// Whether the rain should be painted behind or in front of the child widget
   final bool rainIsInBackground;
@@ -89,10 +92,9 @@ class ParallaxRainState extends State<ParallaxRain>
   bool _reduceMotion = false;
 
   /// Whether the rain moves: not while the fall speed is 0, nor when the user asked for reduced
-  /// motion (unless [ParallaxRain.respectReducedMotion] is off).
+  /// motion (see [ParallaxRain.reducedMotion]).
   bool get _shouldAnimate =>
-      widget.dropFallSpeed != 0 &&
-      !(widget.respectReducedMotion && _reduceMotion);
+      widget.dropFallSpeed != 0 && !(widget.reducedMotion ?? _reduceMotion);
 
   /// Starts or stops the ticker to match [_shouldAnimate]. A stopped ticker costs nothing: the
   /// rain isn't repainted at all.
