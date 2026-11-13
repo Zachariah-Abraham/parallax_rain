@@ -104,9 +104,9 @@ reference for conventions that already work (CI, release-please, shaders, golden
 - On the first `paint`, `initialize()` scatters `numberOfDrops` drops randomly over the canvas
   (`_respawn(drop, size, top: ...)`). Each drop gets a random layer `0..numberOfLayers-1`
   (0 = furthest back). Size and speed are scaled by `1 + layer * distanceBetweenLayers`, and
-  opacity is `(layer + 1) / numberOfLayers`. When the canvas size changes, `_resize` scales each drop's
-  position to the new size (drops keep their relative place instead of bunching up). A drop that falls past the bottom is respawned just
-  above the top with a new random x, layer, and color.
+  opacity is `(layer + 1) / numberOfLayers`. A drop that falls past the bottom is respawned just
+  above the top with a new random x, layer, and color. When the canvas size changes, `_resize`
+  scales each drop's position to the new size, so drops keep their relative place.
 - Movement is time-based: `dropFallSpeed` is pixels per 60 fps frame (`_referenceFrame`), so each
   paint moves drops by `speed * elapsed / 16.667 ms`, clamped to `_maxFramesPerPaint` (6) so they
   don't jump after a pause. Without ticker time (painter used on its own), drops move one frame
