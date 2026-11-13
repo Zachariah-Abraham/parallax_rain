@@ -24,7 +24,8 @@ class ParallaxRain extends StatefulWidget {
       this.distanceBetweenLayers = 1,
       this.child,
       this.rainIsInBackground = true,
-      this.trail = false})
+      this.trail = false,
+      this.reducedMotion})
       : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
         assert(dropColors.isNotEmpty, "The drop colors list cannot be empty"),
         assert(distanceBetweenLayers > 0,
@@ -60,6 +61,16 @@ class ParallaxRain extends StatefulWidget {
   /// Distance between each layer
   final double distanceBetweenLayers;
 
+  /// Whether the rain is held still. The drops stay where they are, and nothing is repainted
+  /// while this is true.
+  ///
+  /// When null (the default), it follows the device: the rain stops when the user has asked the
+  /// system for reduced motion (`MediaQueryData.disableAnimations`). Pass false to keep the rain
+  /// moving regardless, or true to hold it still regardless.
+  ///
+  /// Set a [dropFallSpeed] of 0 to freeze the rain too. The animation is stopped then as well.
+  final bool? reducedMotion;
+
   /// Whether the rain should be painted behind or in front of the child widget
   final bool rainIsInBackground;
 
@@ -78,13 +89,31 @@ class ParallaxRainState extends State<ParallaxRain>
   final ValueNotifier notifier = ValueNotifier(false);
   late ParallaxRainPainter parallaxRainPainter;
   Ticker? _ticker;
+  bool _reduceMotion = false;
+
+  /// Whether the rain moves: not while the fall speed is 0, nor when the user asked for reduced
+  /// motion (see [ParallaxRain.reducedMotion]).
+  bool get _shouldAnimate =>
+      widget.dropFallSpeed != 0 && !(widget.reducedMotion ?? _reduceMotion);
+
+  /// Starts or stops the ticker to match [_shouldAnimate]. A stopped ticker costs nothing: the
+  /// rain isn't repainted at all.
+  void _syncTicker() {
+    final Ticker ticker = _ticker ??= createTicker(_onTick);
+    final bool animate = _shouldAnimate;
+    parallaxRainPainter._frozen = !animate;
+    if (animate == ticker.isActive) return;
+    if (animate) {
+      ticker.start();
+    } else {
+      ticker.stop();
+    }
+  }
 
   /// Starts the animation. It starts automatically, so there's no need to call this.
   @Deprecated(
       'The animation starts automatically. This will be removed in a future release.')
-  void runAnimation() {
-    _ticker ??= createTicker(_onTick)..start();
-  }
+  void runAnimation() => _syncTicker();
 
   void _onTick(Duration elapsed) {
     parallaxRainPainter._elapsed = elapsed;
@@ -95,8 +124,19 @@ class ParallaxRainState extends State<ParallaxRain>
   void initState() {
     super.initState();
     parallaxRainPainter = _createPainter();
-    // ignore: deprecated_member_use_from_same_package
-    runAnimation();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Not MediaQuery.of: it asserts when there is no MediaQuery, and nullOk/maybeOf aren't available
+    // on every supported Flutter version.
+    _reduceMotion = context
+            .dependOnInheritedWidgetOfExactType<MediaQuery>()
+            ?.data
+            .disableAnimations ??
+        false;
+    _syncTicker();
   }
 
   ParallaxRainPainter _createPainter() {
@@ -130,6 +170,7 @@ class ParallaxRainState extends State<ParallaxRain>
       // A new painter with the new settings takes over the drops, so the rain doesn't reset.
       parallaxRainPainter = _createPainter().._takeOver(parallaxRainPainter);
     }
+    _syncTicker();
   }
 
   @override
@@ -181,6 +222,9 @@ class ParallaxRainPainter extends CustomPainter {
   /// used on its own), drops move one reference frame per paint.
   Duration? _elapsed;
   Duration? _lastPaintElapsed;
+
+  /// Set by [ParallaxRainState] while the animation is stopped: paints don't move the drops.
+  bool _frozen = false;
 
   /// The canvas size of the last paint, to move the drops along when the size changes.
   Size? _lastSize;
@@ -282,6 +326,7 @@ class ParallaxRainPainter extends CustomPainter {
 
   /// How many reference frames the drops move in this paint.
   double _framesSinceLastPaint() {
+    if (_frozen) return 0;
     final Duration? elapsed = _elapsed;
     if (elapsed == null) return 1;
     final Duration? last = _lastPaintElapsed;

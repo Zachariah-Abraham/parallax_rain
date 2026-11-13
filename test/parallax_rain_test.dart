@@ -154,6 +154,93 @@ void main() {
     }
   });
 
+  Widget motionApp({
+    required bool reduceMotion,
+    double speed = 1,
+    bool? override,
+  }) =>
+      _app(MediaQuery(
+        data: MediaQueryData(disableAnimations: reduceMotion),
+        child: SizedBox.expand(
+          child: ParallaxRain(
+            numberOfDrops: 50,
+            numberOfLayers: 1,
+            dropFallSpeed: speed,
+            reducedMotion: override,
+          ),
+        ),
+      ));
+
+  List<double> tops(WidgetTester tester) =>
+      [for (final d in _state(tester).parallaxRainPainter.dropList) d.drop.top];
+
+  testWidgets('reduced motion stops the rain but still shows the drops',
+      (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: true));
+    expect(tester.binding.transientCallbackCount, 0);
+    expect(_state(tester).parallaxRainPainter.dropList, hasLength(50));
+
+    final List<double> before = tops(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tops(tester), before);
+    expect(tester.binding.hasScheduledFrame, isFalse);
+  });
+
+  testWidgets('reducedMotion: false keeps the rain moving', (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: true, override: false));
+    expect(tester.binding.transientCallbackCount, greaterThan(0));
+  });
+
+  testWidgets('reducedMotion: true holds the rain still', (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: false, override: true));
+    expect(tester.binding.transientCallbackCount, 0);
+  });
+
+  testWidgets('the rain stops and resumes with the reduced motion setting',
+      (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: false));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.binding.transientCallbackCount, greaterThan(0));
+
+    await tester.pumpWidget(motionApp(reduceMotion: true));
+    expect(tester.binding.transientCallbackCount, 0);
+    final List<double> frozen = tops(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tops(tester), frozen);
+
+    await tester.pumpWidget(motionApp(reduceMotion: false));
+    expect(tester.binding.transientCallbackCount, greaterThan(0));
+    await tester.pump();
+    final List<double> before = tops(tester);
+    await tester.pump(const Duration(milliseconds: 50));
+    const double expected = 50000 / 16667;
+    int moving = 0;
+    for (int i = 0; i < before.length; i++) {
+      final double moved = tops(tester)[i] - before[i];
+      // Respawned drops jump back above the top.
+      if (moved >= 0) {
+        expect(moved, closeTo(expected, 0.01));
+        moving++;
+      }
+    }
+    expect(moving, greaterThan(0));
+  });
+
+  testWidgets('a fall speed of 0 stops the animation until it is raised',
+      (tester) async {
+    await tester.pumpWidget(motionApp(reduceMotion: false, speed: 0));
+    expect(tester.binding.transientCallbackCount, 0);
+    final List<double> before = tops(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tops(tester), before);
+
+    await tester.pumpWidget(motionApp(reduceMotion: false, speed: 1));
+    expect(tester.binding.transientCallbackCount, greaterThan(0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(tops(tester), isNot(before));
+  });
+
   testWidgets('works inside Row and Column (unbounded constraints)',
       (tester) async {
     await tester.pumpWidget(_app(Column(children: [

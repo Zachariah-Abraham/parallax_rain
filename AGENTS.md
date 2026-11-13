@@ -111,6 +111,11 @@ reference for conventions that already work (CI, release-please, shaders, golden
   paint moves drops by `speed * elapsed / 16.667 ms`, clamped to `_maxFramesPerPaint` (6) so they
   don't jump after a pause. Without ticker time (painter used on its own), drops move one frame
   per paint.
+- The `Ticker` runs only while `_shouldAnimate` (`dropFallSpeed != 0` and not reduced motion with
+  `reducedMotion ?? device setting`). `_syncTicker()` starts/stops it from `didChangeDependencies` and
+  `didUpdateWidget`, and sets the painter's `_frozen` so other repaints (resize) don't move drops.
+  Reduced motion is read with `dependOnInheritedWidgetOfExactType<MediaQuery>()` because
+  `MediaQuery.disableAnimationsOf` doesn't exist on Flutter 2.0 (the minimum).
 - Paints are cached per (color, layer) in `_paints`. With `trail: true` the paint holds a vertical
   `LinearGradient` shader (drop color from the bottom up to `trailStartFraction`, then fading to
   transparent at the top), created in the drop's local coordinates. Each drop is drawn with
@@ -208,7 +213,10 @@ those incidental changes as part of unrelated work. Either revert them
 
 ### Accessibility
 - The rain is decorative and must not change the child's semantics or hit testing.
-- Respect reduced motion (`MediaQuery.disableAnimationsOf`) once supported.
+- Reduced motion is supported through `reducedMotion` (`bool?`, default `null` = follow the
+  device). This is a deliberate exception to the "keep today's defaults" rule in §4, because it
+  only changes rendering for users who turned on reduce-motion. The device decides the default,
+  the dev can override it either way.
 
 ### Testing
 - Every behavior change needs **widget tests** in `test/` using `flutter_test`. Useful checks:

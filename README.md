@@ -50,7 +50,7 @@ A full example is in the [example](example/lib/main.dart) directory.
 |---|---|---|
 | `child` | `null` | The widget shown in the center of the rain. |
 | `numberOfDrops` | `200` | Number of drops on screen at any moment. |
-| `dropFallSpeed` | `1` | Fall speed in logical pixels per frame at 60 fps. Drops fall at the same speed on displays with other refresh rates. |
+| `dropFallSpeed` | `1` | Fall speed in logical pixels per frame at 60 fps. Drops fall at the same speed on displays with other refresh rates. A speed of `0` freezes the rain and stops the animation. |
 | `numberOfLayers` | `3` | Number of layers for the parallax effect (at least 1). Drops in nearer layers are bigger, faster and more opaque. |
 | `distanceBetweenLayers` | `1` | How much bigger and faster each layer is than the one behind it (greater than 0). |
 | `dropHeight` | `20` | Height of a drop in the furthest layer. |
@@ -58,6 +58,7 @@ A full example is in the [example](example/lib/main.dart) directory.
 | `dropColors` | `[Colors.greenAccent]` | Each drop gets a random color from this list (not empty). |
 | `trail` | `false` | Whether drops fade out towards the top. |
 | `trailStartFraction` | `0.3` | Fraction of the drop's height, from the bottom, at which the trail starts to fade (0.0 to 1.0). |
+| `reducedMotion` | `null` | Whether to hold the rain still. `null` follows the device: the rain stops when the system asks for reduced motion (`MediaQueryData.disableAnimations`). `true` always holds it still, `false` always keeps it moving. The drops stay visible where they are. |
 | `rainIsInBackground` | `true` | Whether the rain is painted behind (`true`) or in front of (`false`) the child. |
 
 Rebuilding a parent (for example with `setState`) doesn't reset the rain. Parameter changes take
