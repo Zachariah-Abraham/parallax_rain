@@ -1,3 +1,6 @@
+// Flutter 3.50 moved Material to package:material_ui, which doesn't exist on Flutter 2.0 (this
+// package's minimum), so the example keeps using the Flutter SDK's Material library.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:parallax_rain/parallax_rain.dart';
 
