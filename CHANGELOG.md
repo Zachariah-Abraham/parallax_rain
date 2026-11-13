@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.3...v1.2.0) (2026-11-13)
+
+
+### Features
+
+* stop the rain when the system asks for reduced motion ([#12](https://github.com/Zachariah-Abraham/parallax_rain/issues/12)) ([aacb781](https://github.com/Zachariah-Abraham/parallax_rain/commit/aacb7810f5851c46de29e11de285ef64cfa5df8c))
+
 ## [1.1.3](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.2...v1.1.3) (2026-11-13)
 
 
