@@ -129,6 +129,31 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('drops move along when the size changes', (tester) async {
+    Widget rain(double width, double height) => _app(Center(
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: ParallaxRain(numberOfDrops: 50),
+          ),
+        ));
+    await tester.pumpWidget(rain(200, 100));
+    final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
+    final List<double> lefts = [for (final d in drops) d.drop.left];
+    final List<double> tops = [for (final d in drops) d.drop.top];
+
+    await tester.pumpWidget(rain(800, 400));
+    expect(_state(tester).parallaxRainPainter.dropList, same(drops));
+    for (int i = 0; i < drops.length; i++) {
+      final double top = drops[i].drop.top;
+      // Respawned drops jump back above the top. The others keep their relative position, and
+      // the rebuild's paint moves them down by at most three frames (the front layer).
+      if (top < 0) continue;
+      expect(drops[i].drop.left, closeTo(lefts[i] * 4, 1e-6));
+      expect(top - tops[i] * 4, inInclusiveRange(0, 3.01));
+    }
+  });
+
   testWidgets('works inside Row and Column (unbounded constraints)',
       (tester) async {
     await tester.pumpWidget(_app(Column(children: [
