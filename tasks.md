@@ -11,11 +11,6 @@ _Last updated: 2026-11-10_
 - **parallax_rain 1.1.2** is the latest release on pub.dev (published 2026-11-10 through the
   automated release flow, AGENTS.md §6). The release pipeline works end to end.
 
-## Follow-ups
-- [ ] `../glass/CHANGELOG.md` has the ordering problem that 1.1.2 had here (2.4.0 sits below
-      2.0.0+2, because there's no `# Changelog` title). Glass also still allows merge commits.
-      Fix it in the glass repo if the human wants.
-
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
   with the current minimum (for example use `Color.withAlpha` instead of `withValues`, plain
