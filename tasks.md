@@ -8,7 +8,7 @@ AGENTS.md §1.
 _Last updated: 2026-11-13_
 
 ## Current state
-- **parallax_rain 1.1.2** is the latest release on pub.dev (published 2026-11-10 through the
+- **parallax_rain 1.1.3** is the latest release on pub.dev (published 2026-11-13 through the
   automated release flow, AGENTS.md §6). The release pipeline works end to end.
 
 ## Decisions

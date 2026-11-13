@@ -129,7 +129,7 @@ Flutter is managed with **FVM**. `flutter` and `dart` are shell aliases for `fvm
 directly:
 
 ```bash
-F=~/fvm/versions/stable/bin/flutter   # Flutter 3.47.x / Dart 3.13.x as of 2026-11-10
+F=~/fvm/versions/stable/bin/flutter   # Flutter 3.47.x / Dart 3.13.x as of 2026-11-10 (CI uses 3.50.x)
 D=~/fvm/versions/stable/bin/dart
 
 $F pub get                      # root package
@@ -140,7 +140,7 @@ $D format lib test example/lib example/test
 $F pub publish --dry-run        # validates the package; NEVER run without --dry-run unless the human asks
 ```
 
-Other installed SDKs: `~/fvm/versions/3.29.0`. Install more with `fvm install <version>`.
+Other installed SDKs: `~/fvm/versions/3.29.0` and `~/fvm/versions/3.50.0` (matches CI stable). Install more with `fvm install <version>`.
 **Flutter 2.0.x (the minimum) can't run on this Mac.** Its Dart SDK is x64-only and Rosetta isn't
 installed. The minimum is only tested in CI.
 
