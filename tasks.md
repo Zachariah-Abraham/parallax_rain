@@ -37,4 +37,4 @@ _Last updated: 2026-11-13_
       (check impellerc's uniform array limits) or computed procedurally in the shader from time.
       Fall back to plain translucent drops on Skia/web (`ImageFilter.isShaderFilterSupported`).
       Reuse what worked in `../glass` (`shaders/liquid_glass.frag`, `_LiquidBackdropLayer`).
-- [ ] `paused`/`enabled`, child alignment (TODO in source), wind/angle, reduced motion.
+- [ ] Child alignment (TODO in source), wind/angle.
