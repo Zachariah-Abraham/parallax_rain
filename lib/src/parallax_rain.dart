@@ -25,8 +25,11 @@ class ParallaxRain extends StatefulWidget {
       this.child,
       this.rainIsInBackground = true,
       this.trail = false,
+      this.angle = 0,
       this.reducedMotion})
       : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
+        assert(angle > -pi / 2 && angle < pi / 2,
+            "The angle must be between -pi / 2 and pi / 2 (exclusive)"),
         assert(distanceBetweenLayers > 0,
             "The distance between layers cannot be 0, try setting the number of layers to 1 instead"),
         super(key: key);
@@ -59,6 +62,12 @@ class ParallaxRain extends StatefulWidget {
 
   /// Distance between each layer
   final double distanceBetweenLayers;
+
+  /// Tilt of the fall direction from straight down, in radians. Positive angles make the drops fall
+  /// towards the right, negative ones towards the left, and the drops are drawn along their path.
+  /// For example `pi / 12` is 15 degrees. [dropFallSpeed] is the speed along the path. It must be
+  /// between -pi / 2 and pi / 2 (exclusive). Defaults to 0, straight down.
+  final double angle;
 
   /// Whether the rain is held still. The drops stay where they are, and nothing is repainted
   /// while this is true.
@@ -156,6 +165,7 @@ class ParallaxRainState extends State<ParallaxRain>
       dropColors: widget.dropColors,
       trailStartFraction: widget.trailStartFraction,
       distanceBetweenLayers: widget.distanceBetweenLayers,
+      angle: widget.angle,
       notifier: notifier,
     );
   }
@@ -173,6 +183,7 @@ class ParallaxRainState extends State<ParallaxRain>
         !listEquals(w.dropColors, oldWidget.dropColors) ||
         w.trailStartFraction != oldWidget.trailStartFraction ||
         w.distanceBetweenLayers != oldWidget.distanceBetweenLayers ||
+        w.angle != oldWidget.angle ||
         w.trail != oldWidget.trail) {
       // A new painter with the new settings takes over the drops, so the rain doesn't reset.
       parallaxRainPainter = _createPainter().._takeOver(parallaxRainPainter);
@@ -222,6 +233,9 @@ class ParallaxRainPainter extends CustomPainter {
   final List<Color> dropColors;
   final double trailStartFraction;
   final double distanceBetweenLayers;
+
+  /// Tilt of the fall direction from straight down, in radians. See [ParallaxRain.angle].
+  final double angle;
   late final ValueNotifier notifier;
   Random random = Random();
 
@@ -251,8 +265,15 @@ class ParallaxRainPainter extends CustomPainter {
     required this.dropColors,
     required this.trailStartFraction,
     required this.distanceBetweenLayers,
+    this.angle = 0,
     required this.notifier,
-  }) : super(repaint: notifier);
+  })  : _sin = sin(angle),
+        _cos = cos(angle),
+        super(repaint: notifier);
+
+  /// The fall direction, a unit vector (sin, cos) of [angle].
+  final double _sin;
+  final double _cos;
 
   /// Scatters drops randomly over the canvas until there are [numberOfDrops].
   void initialize(Canvas canvas, Size size) {
@@ -303,9 +324,17 @@ class ParallaxRainPainter extends CustomPainter {
   }
 
   /// Gives [drop] a random x position, layer and color. Its top is at [top], or just above the
-  /// canvas if [top] is null.
+  /// canvas if [top] is null. A drop that starts above the canvas can be left of or right of it,
+  /// so that the tilted rain still reaches every part of the canvas.
   void _respawn(Drop drop, Size size, {double? top}) {
-    final double x = random.nextDouble() * size.width;
+    double minX = 0;
+    double maxX = size.width;
+    if (top == null) {
+      final double drift = size.height * _sin / _cos;
+      minX = min(0, -drift);
+      maxX = max(size.width, size.width - drift);
+    }
+    final double x = minX + random.nextDouble() * (maxX - minX);
     final int layer =
         random.nextInt(numberOfLayers); // 0 is the layer furthest behind
     final double scale = 1 + layer * distanceBetweenLayers;
@@ -380,15 +409,29 @@ class ParallaxRainPainter extends CustomPainter {
     for (int i = 0; i < numberOfDrops; i++) {
       final Drop drop = dropList[i];
       final double distance = drop.dropSpeed * frames;
-      if (drop.drop.top + distance < size.height) {
-        drop.drop = drop.drop.translate(0, distance);
+      final Rect moved = drop.drop.translate(distance * _sin, distance * _cos);
+      // A tilted drop is also gone when it has left through the side it falls towards.
+      final double margin = drop.drop.height * _sin.abs();
+      if (moved.top < size.height &&
+          !(_sin > 0 && moved.left >= size.width + margin) &&
+          !(_sin < 0 && moved.right <= -margin)) {
+        drop.drop = moved;
       } else {
         _respawn(drop, size);
       }
 
       // draw drop
       final Paint paint = _paintFor(drop);
-      if (trail) {
+      if (_sin != 0) {
+        // Rotate around the center of the drop, so that its length follows its path.
+        final Rect rect = drop.drop;
+        canvas.save();
+        canvas.translate(rect.center.dx, rect.center.dy);
+        canvas.rotate(-angle);
+        canvas.translate(-rect.width / 2, -rect.height / 2);
+        canvas.drawRect(Offset.zero & rect.size, paint);
+        canvas.restore();
+      } else if (trail) {
         canvas.save();
         canvas.translate(drop.drop.left, drop.drop.top);
         canvas.drawRect(Offset.zero & drop.drop.size, paint);

@@ -118,6 +118,11 @@ reference for conventions that already work (CI, release-please, shaders, golden
   `didUpdateWidget`, and sets the painter's `_frozen` so other repaints (resize) don't move drops.
   Reduced motion is read with `dependOnInheritedWidgetOfExactType<MediaQuery>()` because
   `MediaQuery.disableAnimationsOf` doesn't exist on Flutter 2.0 (the minimum).
+- `angle` tilts the fall direction: each paint moves a drop by `distance * (sin, cos)` of the angle,
+  and a tilted drop is drawn rotated by `-angle` around its center. `_respawn` starts drops above
+  the top over a range widened by `height * tan(angle)` towards the side they come from, so the
+  tilted rain still covers the whole canvas, and a drop that leaves through the side it falls
+  towards is respawned too. At angle 0 nothing changes (same paths, same random draws).
 - Paints are cached per (color, layer) in `_paints`. With `trail: true` the paint holds a vertical
   `LinearGradient` shader (drop color from the bottom up to `trailStartFraction`, then fading to
   transparent at the top), created in the drop's local coordinates. Each drop is drawn with

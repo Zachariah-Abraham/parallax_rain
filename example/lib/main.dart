@@ -116,9 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     dropColors: const [Colors.blueGrey],
                     trail: true,
                     dropFallSpeed: 5,
+                    angle: 0.3,
                     child: const Center(
                       child: Text(
-                        "BlueGrey Trail Fast",
+                        "BlueGrey Trail Fast, Tilted",
                       ),
                     ),
                   ),
