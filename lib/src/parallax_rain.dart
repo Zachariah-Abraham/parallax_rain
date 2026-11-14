@@ -8,6 +8,19 @@ import 'package:flutter/scheduler.dart';
 /// library.
 const Color _greenAccent = Color(0xFF69F0AE);
 
+/// The shape of a rain drop, see [ParallaxRain.dropShape].
+enum DropShape {
+  /// A plain rectangle, as in all versions before 1.5.0.
+  rectangle,
+
+  /// A rectangle with fully rounded ends, like a capsule or a streak of rain.
+  rounded,
+
+  /// An ellipse that fills the drop's width and height. With the same `dropWidth` and `dropHeight`
+  /// it is a circle.
+  oval,
+}
+
 /// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
   const ParallaxRain(
@@ -24,6 +37,7 @@ class ParallaxRain extends StatefulWidget {
       this.rainIsInBackground = true,
       this.trail = false,
       this.angle = 0,
+      this.dropShape = DropShape.rectangle,
       this.alignment,
       this.reducedMotion})
       : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
@@ -67,6 +81,10 @@ class ParallaxRain extends StatefulWidget {
   /// For example `pi / 12` is 15 degrees. [dropFallSpeed] is the speed along the path. It must be
   /// between -pi / 2 and pi / 2 (exclusive). Defaults to 0, straight down.
   final double angle;
+
+  /// The shape of the drops. Defaults to [DropShape.rectangle]. The shape fills the drop's width
+  /// and height, and works with [trail] and [angle].
+  final DropShape dropShape;
 
   /// How [child] is positioned inside the rain area. When it is null (the default), the child gets
   /// the incoming constraints and the rain is as big as the child. When it is set, the rain fills
@@ -170,6 +188,7 @@ class ParallaxRainState extends State<ParallaxRain>
       trailStartFraction: widget.trailStartFraction,
       distanceBetweenLayers: widget.distanceBetweenLayers,
       angle: widget.angle,
+      shape: widget.dropShape,
       notifier: notifier,
     );
   }
@@ -188,6 +207,7 @@ class ParallaxRainState extends State<ParallaxRain>
         w.trailStartFraction != oldWidget.trailStartFraction ||
         w.distanceBetweenLayers != oldWidget.distanceBetweenLayers ||
         w.angle != oldWidget.angle ||
+        w.dropShape != oldWidget.dropShape ||
         w.trail != oldWidget.trail) {
       // A new painter with the new settings takes over the drops, so the rain doesn't reset.
       parallaxRainPainter = _createPainter().._takeOver(parallaxRainPainter);
@@ -241,6 +261,9 @@ class ParallaxRainPainter extends CustomPainter {
 
   /// Tilt of the fall direction from straight down, in radians. See [ParallaxRain.angle].
   final double angle;
+
+  /// The shape of the drops. See [ParallaxRain.dropShape].
+  final DropShape shape;
   late final ValueNotifier notifier;
   Random random = Random();
 
@@ -259,6 +282,9 @@ class ParallaxRainPainter extends CustomPainter {
   /// local coordinates, so the same paint works for every drop of that color and layer.
   final Map<Color, List<Paint?>> _paints = <Color, List<Paint?>>{};
 
+  /// The outline of a drop of each layer in the drop's local coordinates (null for rectangles).
+  late final List<RRect?> _outlines = List<RRect?>.filled(numberOfLayers, null);
+
   ParallaxRainPainter({
     // required this.parentSize,
     required this.numberOfDrops,
@@ -271,6 +297,7 @@ class ParallaxRainPainter extends CustomPainter {
     required this.trailStartFraction,
     required this.distanceBetweenLayers,
     this.angle = 0,
+    this.shape = DropShape.rectangle,
     required this.notifier,
   })  : _sin = sin(angle),
         _cos = cos(angle),
@@ -434,17 +461,35 @@ class ParallaxRainPainter extends CustomPainter {
         canvas.translate(rect.center.dx, rect.center.dy);
         canvas.rotate(-angle);
         canvas.translate(-rect.width / 2, -rect.height / 2);
-        canvas.drawRect(Offset.zero & rect.size, paint);
+        _drawLocal(canvas, drop, paint);
         canvas.restore();
-      } else if (trail) {
+      } else if (trail || shape != DropShape.rectangle) {
         canvas.save();
         canvas.translate(drop.drop.left, drop.drop.top);
-        canvas.drawRect(Offset.zero & drop.drop.size, paint);
+        _drawLocal(canvas, drop, paint);
         canvas.restore();
       } else {
         canvas.drawRect(drop.drop, paint);
       }
     }
+  }
+
+  /// Draws [drop] with its top left corner at the origin of [canvas].
+  void _drawLocal(Canvas canvas, Drop drop, Paint paint) {
+    if (shape == DropShape.rectangle) {
+      canvas.drawRect(Offset.zero & drop.drop.size, paint);
+      return;
+    }
+    final RRect outline = _outlines[drop.dropLayer] ??= _createOutline(drop);
+    canvas.drawRRect(outline, paint);
+  }
+
+  RRect _createOutline(Drop drop) {
+    final Size size = drop.drop.size;
+    final Radius radius = shape == DropShape.oval
+        ? Radius.elliptical(size.width / 2, size.height / 2)
+        : Radius.circular(min(size.width, size.height) / 2);
+    return RRect.fromRectAndRadius(Offset.zero & size, radius);
   }
 
   @override

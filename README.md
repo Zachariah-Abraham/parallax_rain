@@ -59,6 +59,7 @@ A full example is in the [example](example/lib/main.dart) directory.
 | `trail` | `false` | Whether drops fade out towards the top. |
 | `trailStartFraction` | `0.3` | Fraction of the drop's height, from the bottom, at which the trail starts to fade (0.0 to 1.0). |
 | `angle` | `0` | Tilt of the fall direction from straight down, in radians (for example `pi / 12`). Positive angles fall towards the right, negative ones towards the left. Must be between `-pi / 2` and `pi / 2`. |
+| `dropShape` | `DropShape.rectangle` | Shape of the drops: `rectangle`, `rounded` (capsule) or `oval` (a circle if width equals height). Works with `trail` and `angle`. |
 | `alignment` | `null` | Where the child sits inside the rain area, for example `Alignment.bottomRight`. When set, the rain fills the space its parent allows and the child is aligned in it. |
 | `reducedMotion` | `null` | Whether to hold the rain still. `null` follows the device: the rain stops when the system asks for reduced motion (`MediaQueryData.disableAnimations`). `true` always holds it still, `false` always keeps it moving. The drops stay visible where they are. |
 | `rainIsInBackground` | `true` | Whether the rain is painted behind (`true`) or in front of (`false`) the child. |

@@ -102,10 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ParallaxRain(
                     key: parallaxThree,
                     dropColors: const [Colors.blueGrey],
+                    dropShape: DropShape.rounded,
+                    dropWidth: 2,
                     trail: true,
                     child: const Center(
                       child: Text(
-                        "BlueGrey Trail",
+                        "BlueGrey Rounded Trail",
                       ),
                     ),
                   ),

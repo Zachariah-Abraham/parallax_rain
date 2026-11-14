@@ -31,6 +31,21 @@ class _RotationRecorder implements Canvas {
   dynamic noSuchMethod(Invocation invocation) => null;
 }
 
+/// A canvas that only records which shapes are drawn. Everything else is ignored.
+class _ShapeRecorder implements Canvas {
+  final List<Rect> rects = <Rect>[];
+  final List<RRect> rrects = <RRect>[];
+
+  @override
+  void drawRect(Rect rect, Paint paint) => rects.add(rect);
+
+  @override
+  void drawRRect(RRect rrect, Paint paint) => rrects.add(rrect);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
 void main() {
   testWidgets('builds with defaults and scatters drops on first paint',
       (tester) async {
@@ -411,5 +426,67 @@ void main() {
       child: ParallaxRain(child: SizedBox(width: 20, height: 10)),
     )));
     expect(tester.getSize(find.byType(ParallaxRain)), const Size(20, 10));
+  });
+
+  group('dropShape', () {
+    Future<_ShapeRecorder> draw(
+      WidgetTester tester,
+      DropShape shape, {
+      bool trail = false,
+      double angle = 0,
+    }) async {
+      await tester.pumpWidget(_app(ParallaxRain(
+        key: UniqueKey(),
+        numberOfDrops: 5,
+        numberOfLayers: 1,
+        dropWidth: 4,
+        dropHeight: 20,
+        dropShape: shape,
+        trail: trail,
+        angle: angle,
+      )));
+      final _ShapeRecorder canvas = _ShapeRecorder();
+      _state(tester).parallaxRainPainter.paint(canvas, const Size(600, 400));
+      return canvas;
+    }
+
+    testWidgets('rectangle draws rects, as before', (tester) async {
+      final _ShapeRecorder canvas = await draw(tester, DropShape.rectangle);
+      expect(canvas.rects, hasLength(5));
+      expect(canvas.rrects, isEmpty);
+    });
+
+    testWidgets('rounded draws capsules', (tester) async {
+      final _ShapeRecorder canvas = await draw(tester, DropShape.rounded);
+      expect(canvas.rects, isEmpty);
+      expect(canvas.rrects, hasLength(5));
+      expect(canvas.rrects.first.width, 4);
+      expect(canvas.rrects.first.height, 20);
+      expect(canvas.rrects.first.tlRadius, const Radius.circular(2));
+    });
+
+    testWidgets('oval draws ellipses, also with trail and angle',
+        (tester) async {
+      for (final bool trail in [false, true]) {
+        for (final double angle in [0.0, 0.3]) {
+          final _ShapeRecorder canvas =
+              await draw(tester, DropShape.oval, trail: trail, angle: angle);
+          expect(canvas.rects, isEmpty);
+          expect(canvas.rrects, hasLength(5));
+          expect(canvas.rrects.first.tlRadiusX, closeTo(2, 1e-9));
+          expect(canvas.rrects.first.tlRadiusY, closeTo(10, 1e-9));
+        }
+      }
+    });
+
+    testWidgets('changing the shape keeps the drops', (tester) async {
+      await tester.pumpWidget(_app(const ParallaxRain(numberOfDrops: 5)));
+      final List<Drop> before = _state(tester).parallaxRainPainter.dropList;
+      await tester.pumpWidget(_app(
+        const ParallaxRain(numberOfDrops: 5, dropShape: DropShape.oval),
+      ));
+      expect(_state(tester).parallaxRainPainter.shape, DropShape.oval);
+      expect(_state(tester).parallaxRainPainter.dropList, same(before));
+    });
   });
 }
