@@ -98,6 +98,8 @@ reference for conventions that already work (CI, release-please, shaders, golden
   the new size, speed, layer (if out of range) and color (if no longer in `dropColors`); extra
   drops are removed and missing ones are scattered on the next paint. A parent `setState` with
   unchanged settings keeps the same painter. Drops must never reset on rebuild (1.1.0).
+- The `ParallaxRain` constructor is `const`, so its asserts can only use constant expressions. The
+  non-constant check (`dropColors.isNotEmpty`) lives in `ParallaxRainState._assertSettings()`.
 - `build()` returns `ClipRect > CustomPaint(painter or foregroundPainter) > Container > child`.
   The widget sizes itself to its child (1.0.2). Unbounded constraints (inside a `Row`/`Column`)
   must not stop the rain (1.0.4 fix).

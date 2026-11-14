@@ -21,7 +21,7 @@ ParallaxRainState _state(WidgetTester tester) =>
 void main() {
   testWidgets('builds with defaults and scatters drops on first paint',
       (tester) async {
-    await tester.pumpWidget(_app(SizedBox.expand(child: ParallaxRain())));
+    await tester.pumpWidget(_app(const SizedBox.expand(child: ParallaxRain())));
 
     final ParallaxRainPainter painter = _state(tester).parallaxRainPainter;
     expect(painter.dropList, hasLength(200));
@@ -33,7 +33,7 @@ void main() {
 
   testWidgets('rainIsInBackground selects painter or foregroundPainter',
       (tester) async {
-    await tester.pumpWidget(_app(ParallaxRain(child: const Text('child'))));
+    await tester.pumpWidget(_app(const ParallaxRain(child: Text('child'))));
     expect(_rainPaint(tester).painter, isA<ParallaxRainPainter>());
     expect(_rainPaint(tester).foregroundPainter, isNull);
 
@@ -48,7 +48,7 @@ void main() {
   });
 
   testWidgets('drops move with elapsed time', (tester) async {
-    await tester.pumpWidget(_app(SizedBox.expand(
+    await tester.pumpWidget(_app(const SizedBox.expand(
       child: ParallaxRain(numberOfDrops: 50, numberOfLayers: 1),
     )));
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
@@ -134,7 +134,7 @@ void main() {
           child: SizedBox(
             width: width,
             height: height,
-            child: ParallaxRain(numberOfDrops: 50),
+            child: const ParallaxRain(numberOfDrops: 50),
           ),
         ));
     await tester.pumpWidget(rain(200, 100));
@@ -241,12 +241,29 @@ void main() {
     expect(tops(tester), isNot(before));
   });
 
+  testWidgets('can be a const widget', (tester) async {
+    const Widget rain = SizedBox.expand(child: ParallaxRain(numberOfDrops: 10));
+    await tester.pumpWidget(_app(rain));
+    await tester.pumpWidget(_app(rain));
+    expect(_state(tester).parallaxRainPainter.dropList, hasLength(10));
+  });
+
+  testWidgets('an empty list of drop colors is rejected', (tester) async {
+    await tester.pumpWidget(_app(const ParallaxRain(dropColors: [])));
+    expect(tester.takeException(), isAssertionError);
+  });
+
   testWidgets('works inside Row and Column (unbounded constraints)',
       (tester) async {
-    await tester.pumpWidget(_app(Column(children: [
-      Row(children: [ParallaxRain(child: const Text('row'))]),
-      ParallaxRain(child: const Text('column')),
-    ])));
+    // Not const: the Flutter SDK's own Row/Column asserts can't be evaluated at compile time.
+    await tester.pumpWidget(_app(
+      // ignore: prefer_const_constructors, prefer_const_literals_to_create_immutables
+      Column(children: [
+        // ignore: prefer_const_constructors
+        Row(children: const [ParallaxRain(child: Text('row'))]),
+        const ParallaxRain(child: Text('column')),
+      ]),
+    ));
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(tester.takeException(), isNull);
@@ -255,7 +272,7 @@ void main() {
   });
 
   testWidgets('disposing stops the animation', (tester) async {
-    await tester.pumpWidget(_app(ParallaxRain(child: const Text('rain'))));
+    await tester.pumpWidget(_app(const ParallaxRain(child: Text('rain'))));
     expect(tester.binding.transientCallbackCount, greaterThan(0));
 
     await tester.pumpWidget(_app(const SizedBox()));
