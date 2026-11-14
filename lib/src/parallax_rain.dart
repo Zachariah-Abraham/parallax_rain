@@ -8,31 +8,34 @@ import 'package:flutter/scheduler.dart';
 /// library.
 const Color _greenAccent = Color(0xFF69F0AE);
 
-// TODO: Allow custom positioning of the child widget (is only center at the moment)
-
 /// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
-  const ParallaxRain(
-      {Key? key,
-      this.numberOfDrops = 200,
-      this.dropFallSpeed = 1,
-      this.numberOfLayers = 3,
-      this.dropHeight = 20,
-      this.dropWidth = 1,
-      this.dropColors = const [_greenAccent],
-      this.trailStartFraction = 0.3,
-      this.distanceBetweenLayers = 1,
-      this.child,
-      this.rainIsInBackground = true,
-      this.trail = false,
-      this.angle = 0,
-      this.reducedMotion})
-      : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
-        assert(angle > -pi / 2 && angle < pi / 2,
-            "The angle must be between -pi / 2 and pi / 2 (exclusive)"),
-        assert(distanceBetweenLayers > 0,
-            "The distance between layers cannot be 0, try setting the number of layers to 1 instead"),
-        super(key: key);
+  const ParallaxRain({
+    Key? key,
+    this.numberOfDrops = 200,
+    this.dropFallSpeed = 1,
+    this.numberOfLayers = 3,
+    this.dropHeight = 20,
+    this.dropWidth = 1,
+    this.dropColors = const [_greenAccent],
+    this.trailStartFraction = 0.3,
+    this.distanceBetweenLayers = 1,
+    this.child,
+    this.rainIsInBackground = true,
+    this.trail = false,
+    this.angle = 0,
+    this.alignment,
+    this.reducedMotion,
+  }) : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
+       assert(
+         angle > -pi / 2 && angle < pi / 2,
+         "The angle must be between -pi / 2 and pi / 2 (exclusive)",
+       ),
+       assert(
+         distanceBetweenLayers > 0,
+         "The distance between layers cannot be 0, try setting the number of layers to 1 instead",
+       ),
+       super(key: key);
 
   /// Number of drops on screen at any moment
   final int numberOfDrops;
@@ -68,6 +71,11 @@ class ParallaxRain extends StatefulWidget {
   /// For example `pi / 12` is 15 degrees. [dropFallSpeed] is the speed along the path. It must be
   /// between -pi / 2 and pi / 2 (exclusive). Defaults to 0, straight down.
   final double angle;
+
+  /// How [child] is positioned inside the rain area. When it is null (the default), the child gets
+  /// the incoming constraints and the rain is as big as the child. When it is set, the rain fills
+  /// the space the parent allows (if bounded) and the child is aligned inside it.
+  final AlignmentGeometry? alignment;
 
   /// Whether the rain is held still. The drops stay where they are, and nothing is repainted
   /// while this is true.
@@ -120,7 +128,8 @@ class ParallaxRainState extends State<ParallaxRain>
 
   /// Starts the animation. It starts automatically, so there's no need to call this.
   @Deprecated(
-      'The animation starts automatically. This will be removed in a future release.')
+    'The animation starts automatically. This will be removed in a future release.',
+  )
   void runAnimation() => _syncTicker();
 
   void _onTick(Duration elapsed) {
@@ -140,7 +149,8 @@ class ParallaxRainState extends State<ParallaxRain>
     super.didChangeDependencies();
     // Not MediaQuery.of: it asserts when there is no MediaQuery, and nullOk/maybeOf aren't available
     // on every supported Flutter version.
-    _reduceMotion = context
+    _reduceMotion =
+        context
             .dependOnInheritedWidgetOfExactType<MediaQuery>()
             ?.data
             .disableAnimations ??
@@ -151,7 +161,9 @@ class ParallaxRainState extends State<ParallaxRain>
   /// Checks what a const constructor can't.
   void _assertSettings() {
     assert(
-        widget.dropColors.isNotEmpty, "The drop colors list cannot be empty");
+      widget.dropColors.isNotEmpty,
+      "The drop colors list cannot be empty",
+    );
   }
 
   ParallaxRainPainter _createPainter() {
@@ -203,9 +215,7 @@ class ParallaxRainState extends State<ParallaxRain>
     return ClipRect(
       child: CustomPaint(
         painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
-        child: Container(
-          child: widget.child,
-        ),
+        child: Container(alignment: widget.alignment, child: widget.child),
         foregroundPainter:
             (widget.rainIsInBackground) ? null : parallaxRainPainter,
       ),
@@ -267,9 +277,9 @@ class ParallaxRainPainter extends CustomPainter {
     required this.distanceBetweenLayers,
     this.angle = 0,
     required this.notifier,
-  })  : _sin = sin(angle),
-        _cos = cos(angle),
-        super(repaint: notifier);
+  }) : _sin = sin(angle),
+       _cos = cos(angle),
+       super(repaint: notifier);
 
   /// The fall direction, a unit vector (sin, cos) of [angle].
   final double _sin;
@@ -277,17 +287,19 @@ class ParallaxRainPainter extends CustomPainter {
 
   /// Scatters drops randomly over the canvas until there are [numberOfDrops].
   void initialize(Canvas canvas, Size size) {
-    paintObject = Paint()
-      ..color = dropColors[0]
-      ..style = PaintingStyle.fill;
+    paintObject =
+        Paint()
+          ..color = dropColors[0]
+          ..style = PaintingStyle.fill;
     dropSize = Size(dropWidth, dropHeight);
     while (dropList.length < numberOfDrops) {
       // Keeping [widget.numberOfLayers] layers for the parallax effect, the base values are for the layer furthest behind
       final drop = Drop(
-          drop: Rect.zero,
-          dropSpeed: 0,
-          dropLayer: 0,
-          dropColor: dropColors[0]);
+        drop: Rect.zero,
+        dropSpeed: 0,
+        dropLayer: 0,
+        dropColor: dropColors[0],
+      );
       _respawn(drop, size, top: random.nextDouble() * size.height);
       dropList.add(drop);
     }
@@ -301,9 +313,10 @@ class ParallaxRainPainter extends CustomPainter {
     _lastSize = old._lastSize;
     if (old.dropList.isEmpty) return;
     dropSize = Size(dropWidth, dropHeight);
-    paintObject = Paint()
-      ..color = dropColors[0]
-      ..style = PaintingStyle.fill;
+    paintObject =
+        Paint()
+          ..color = dropColors[0]
+          ..style = PaintingStyle.fill;
     dropList = old.dropList;
     if (dropList.length > numberOfDrops) {
       dropList.removeRange(numberOfDrops, dropList.length);
@@ -317,8 +330,12 @@ class ParallaxRainPainter extends CustomPainter {
         drop.dropColor = dropColors[random.nextInt(dropColors.length)];
       }
       final double scale = 1 + drop.dropLayer * distanceBetweenLayers;
-      drop.drop = Rect.fromLTWH(drop.drop.left, drop.drop.top,
-          dropSize.width * scale, dropSize.height * scale);
+      drop.drop = Rect.fromLTWH(
+        drop.drop.left,
+        drop.drop.top,
+        dropSize.width * scale,
+        dropSize.height * scale,
+      );
       drop.dropSpeed = dropFallSpeed * scale;
     }
   }
@@ -335,12 +352,17 @@ class ParallaxRainPainter extends CustomPainter {
       maxX = max(size.width, size.width - drift);
     }
     final double x = minX + random.nextDouble() * (maxX - minX);
-    final int layer =
-        random.nextInt(numberOfLayers); // 0 is the layer furthest behind
+    final int layer = random.nextInt(
+      numberOfLayers,
+    ); // 0 is the layer furthest behind
     final double scale = 1 + layer * distanceBetweenLayers;
     final double height = dropSize.height * scale;
-    drop.drop =
-        Rect.fromLTWH(x, top ?? -height, dropSize.width * scale, height);
+    drop.drop = Rect.fromLTWH(
+      x,
+      top ?? -height,
+      dropSize.width * scale,
+      height,
+    );
     drop.dropSpeed = dropFallSpeed * scale;
     drop.dropLayer = layer;
     drop.dropColor = dropColors[random.nextInt(dropColors.length)];
@@ -350,12 +372,14 @@ class ParallaxRainPainter extends CustomPainter {
   /// positions. On an axis that had no extent, drops are scattered randomly instead.
   void _resize(Size oldSize, Size size) {
     for (final Drop drop in dropList) {
-      final double left = oldSize.width > 0
-          ? drop.drop.left * size.width / oldSize.width
-          : random.nextDouble() * size.width;
-      final double top = oldSize.height > 0
-          ? drop.drop.top * size.height / oldSize.height
-          : random.nextDouble() * size.height;
+      final double left =
+          oldSize.width > 0
+              ? drop.drop.left * size.width / oldSize.width
+              : random.nextDouble() * size.width;
+      final double top =
+          oldSize.height > 0
+              ? drop.drop.top * size.height / oldSize.height
+              : random.nextDouble() * size.height;
       drop.drop = Rect.fromLTWH(left, top, drop.drop.width, drop.drop.height);
     }
   }
@@ -375,14 +399,17 @@ class ParallaxRainPainter extends CustomPainter {
 
   Paint _paintFor(Drop drop) {
     final List<Paint?> byLayer = _paints.putIfAbsent(
-        drop.dropColor, () => List<Paint?>.filled(numberOfLayers, null));
+      drop.dropColor,
+      () => List<Paint?>.filled(numberOfLayers, null),
+    );
     final int layer = drop.dropLayer;
     return byLayer[layer] ??= _createPaint(drop);
   }
 
   Paint _createPaint(Drop drop) {
-    final Color color = drop.dropColor
-        .withAlpha((255.0 * (drop.dropLayer + 1) / numberOfLayers).round());
+    final Color color = drop.dropColor.withAlpha(
+      (255.0 * (drop.dropLayer + 1) / numberOfLayers).round(),
+    );
     if (!trail) {
       return Paint()
         ..color = color
