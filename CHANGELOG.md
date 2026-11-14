@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.3.0...v1.4.0) (2026-11-14)
+
+
+### Features
+
+* add alignment to position the child inside the rain area ([#19](https://github.com/Zachariah-Abraham/parallax_rain/issues/19)) ([c61d12d](https://github.com/Zachariah-Abraham/parallax_rain/commit/c61d12db3fd3f99a3023d8cbc223e2f462ea1441))
+
 ## [1.3.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.2.0...v1.3.0) (2026-11-14)
 
 
