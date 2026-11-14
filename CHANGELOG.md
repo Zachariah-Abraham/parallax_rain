@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.4.0...v1.5.0) (2026-11-14)
+
+
+### Features
+
+* add dropShape to draw rounded or oval drops ([#22](https://github.com/Zachariah-Abraham/parallax_rain/issues/22)) ([942d5ed](https://github.com/Zachariah-Abraham/parallax_rain/commit/942d5ed3c4a31a1b170511d2fdd341ca4a63a648))
+
 ## [1.4.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.3.0...v1.4.0) (2026-11-14)
 
 
