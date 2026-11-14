@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.2.0...v1.3.0) (2026-11-14)
+
+
+### Features
+
+* add an angle to tilt the fall direction of the rain ([#16](https://github.com/Zachariah-Abraham/parallax_rain/issues/16)) ([8667430](https://github.com/Zachariah-Abraham/parallax_rain/commit/866743071287e6485f93b7c89dae044df9df0b15))
+* make the ParallaxRain constructor const ([#15](https://github.com/Zachariah-Abraham/parallax_rain/issues/15)) ([34eb229](https://github.com/Zachariah-Abraham/parallax_rain/commit/34eb22934f08577aabed3cc4190323e6b57a0f8d))
+
 ## [1.2.0](https://github.com/Zachariah-Abraham/parallax_rain/compare/v1.1.3...v1.2.0) (2026-11-13)
 
 
