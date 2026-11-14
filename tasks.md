@@ -8,8 +8,9 @@ AGENTS.md §1.
 _Last updated: 2026-11-15_
 
 ## Current state
-- **parallax_rain 1.4.0** (adds `alignment`) is the latest release on pub.dev (published 2026-11-14 through the
-  automated release flow, AGENTS.md §6). The release pipeline works end to end.
+- **parallax_rain 1.5.0** (adds `dropShape`; 1.4.0 added `alignment`) is the latest release on
+  pub.dev (published 2026-11-14 through the automated release flow, AGENTS.md §6). The release
+  pipeline works end to end.
 
 ## Decisions
 - **SDK minimum:** don't raise it unless code needs a newer API. Fixes should stay compatible
@@ -25,6 +26,7 @@ _Last updated: 2026-11-15_
 - **Glass rain (refracting drops via `ImageFilter.shader`) was built and rejected on 2026-11-15**:
   the maintainer didn't like the look. Don't retry it. It would also have raised the SDK minimum to 3.29.
 
-## Pending (in this order)
-1. [ ] Drop shapes (rounded, streak/line, circle) and/or a sprite `ui.Image` drawn with
-       `drawRawAtlas`. A per-drop widget builder is too slow (hundreds of widgets per frame).
+## Pending
+1. [ ] More drop shapes: a sprite `ui.Image` drawn with `drawRawAtlas`, a teardrop. (`DropShape`
+       has rectangle, rounded and oval since 1.5.0.) A per-drop widget builder is too slow
+       (hundreds of widgets per frame).
