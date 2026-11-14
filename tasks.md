@@ -5,10 +5,10 @@ another agent can continue if you're cut off. Delete finished items (git history
 `CHANGELOG.md` are the record); move lasting facts to `AGENTS.md`. Use absolute dates. See
 AGENTS.md §1.
 
-_Last updated: 2026-11-13_
+_Last updated: 2026-11-14_
 
 ## Current state
-- **parallax_rain 1.2.0** is the latest release on pub.dev (published 2026-11-13 through the
+- **parallax_rain 1.3.0** is the latest release on pub.dev (published 2026-11-14 through the
   automated release flow, AGENTS.md §6). The release pipeline works end to end.
 
 ## Decisions
