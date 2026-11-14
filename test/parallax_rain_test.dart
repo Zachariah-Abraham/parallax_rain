@@ -20,6 +20,17 @@ CustomPaint _rainPaint(WidgetTester tester) => tester.widget<CustomPaint>(
 ParallaxRainState _state(WidgetTester tester) =>
     tester.state<ParallaxRainState>(find.byType(ParallaxRain));
 
+/// A canvas that only records the rotations. Everything else is ignored.
+class _RotationRecorder implements Canvas {
+  final List<double> rotations = <double>[];
+
+  @override
+  void rotate(double radians) => rotations.add(radians);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
 void main() {
   testWidgets('builds with defaults and scatters drops on first paint',
       (tester) async {
@@ -294,21 +305,19 @@ void main() {
   });
 
   testWidgets('drops are drawn along their angle', (tester) async {
+    List<double> rotations(ParallaxRainPainter painter) {
+      final _RotationRecorder canvas = _RotationRecorder();
+      painter.paint(canvas, const Size(600, 400));
+      return canvas.rotations;
+    }
+
     await tester.pumpWidget(angledApp(pi / 6, drops: 5));
-    final RenderObject paint = tester.renderObject(find.descendant(
-      of: find.byType(ParallaxRain),
-      matching: find.byType(CustomPaint),
-    ));
-    expect(paint, paints..rotate(angle: -pi / 6));
+    expect(
+        rotations(_state(tester).parallaxRainPainter), everyElement(-pi / 6));
+    expect(rotations(_state(tester).parallaxRainPainter), hasLength(5));
 
     await tester.pumpWidget(angledApp(0, drops: 5));
-    expect(
-      tester.renderObject(find.descendant(
-        of: find.byType(ParallaxRain),
-        matching: find.byType(CustomPaint),
-      )),
-      isNot(paints..rotate()),
-    );
+    expect(rotations(_state(tester).parallaxRainPainter), isEmpty);
   });
 
   testWidgets('changing the angle keeps the drops', (tester) async {
