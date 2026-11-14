@@ -10,31 +10,27 @@ const Color _greenAccent = Color(0xFF69F0AE);
 
 /// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
-  const ParallaxRain({
-    Key? key,
-    this.numberOfDrops = 200,
-    this.dropFallSpeed = 1,
-    this.numberOfLayers = 3,
-    this.dropHeight = 20,
-    this.dropWidth = 1,
-    this.dropColors = const [_greenAccent],
-    this.trailStartFraction = 0.3,
-    this.distanceBetweenLayers = 1,
-    this.child,
-    this.rainIsInBackground = true,
-    this.trail = false,
-    this.angle = 0,
-    this.alignment,
-    this.reducedMotion,
-  })  : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
-        assert(
-          angle > -pi / 2 && angle < pi / 2,
-          "The angle must be between -pi / 2 and pi / 2 (exclusive)",
-        ),
-        assert(
-          distanceBetweenLayers > 0,
-          "The distance between layers cannot be 0, try setting the number of layers to 1 instead",
-        ),
+  const ParallaxRain(
+      {Key? key,
+      this.numberOfDrops = 200,
+      this.dropFallSpeed = 1,
+      this.numberOfLayers = 3,
+      this.dropHeight = 20,
+      this.dropWidth = 1,
+      this.dropColors = const [_greenAccent],
+      this.trailStartFraction = 0.3,
+      this.distanceBetweenLayers = 1,
+      this.child,
+      this.rainIsInBackground = true,
+      this.trail = false,
+      this.angle = 0,
+      this.alignment,
+      this.reducedMotion})
+      : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
+        assert(angle > -pi / 2 && angle < pi / 2,
+            "The angle must be between -pi / 2 and pi / 2 (exclusive)"),
+        assert(distanceBetweenLayers > 0,
+            "The distance between layers cannot be 0, try setting the number of layers to 1 instead"),
         super(key: key);
 
   /// Number of drops on screen at any moment
@@ -128,8 +124,7 @@ class ParallaxRainState extends State<ParallaxRain>
 
   /// Starts the animation. It starts automatically, so there's no need to call this.
   @Deprecated(
-    'The animation starts automatically. This will be removed in a future release.',
-  )
+      'The animation starts automatically. This will be removed in a future release.')
   void runAnimation() => _syncTicker();
 
   void _onTick(Duration elapsed) {
@@ -160,9 +155,7 @@ class ParallaxRainState extends State<ParallaxRain>
   /// Checks what a const constructor can't.
   void _assertSettings() {
     assert(
-      widget.dropColors.isNotEmpty,
-      "The drop colors list cannot be empty",
-    );
+        widget.dropColors.isNotEmpty, "The drop colors list cannot be empty");
   }
 
   ParallaxRainPainter _createPainter() {
@@ -214,7 +207,10 @@ class ParallaxRainState extends State<ParallaxRain>
     return ClipRect(
       child: CustomPaint(
         painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
-        child: Container(alignment: widget.alignment, child: widget.child),
+        child: Container(
+          alignment: widget.alignment,
+          child: widget.child,
+        ),
         foregroundPainter:
             (widget.rainIsInBackground) ? null : parallaxRainPainter,
       ),
@@ -293,11 +289,10 @@ class ParallaxRainPainter extends CustomPainter {
     while (dropList.length < numberOfDrops) {
       // Keeping [widget.numberOfLayers] layers for the parallax effect, the base values are for the layer furthest behind
       final drop = Drop(
-        drop: Rect.zero,
-        dropSpeed: 0,
-        dropLayer: 0,
-        dropColor: dropColors[0],
-      );
+          drop: Rect.zero,
+          dropSpeed: 0,
+          dropLayer: 0,
+          dropColor: dropColors[0]);
       _respawn(drop, size, top: random.nextDouble() * size.height);
       dropList.add(drop);
     }
@@ -327,12 +322,8 @@ class ParallaxRainPainter extends CustomPainter {
         drop.dropColor = dropColors[random.nextInt(dropColors.length)];
       }
       final double scale = 1 + drop.dropLayer * distanceBetweenLayers;
-      drop.drop = Rect.fromLTWH(
-        drop.drop.left,
-        drop.drop.top,
-        dropSize.width * scale,
-        dropSize.height * scale,
-      );
+      drop.drop = Rect.fromLTWH(drop.drop.left, drop.drop.top,
+          dropSize.width * scale, dropSize.height * scale);
       drop.dropSpeed = dropFallSpeed * scale;
     }
   }
@@ -349,17 +340,12 @@ class ParallaxRainPainter extends CustomPainter {
       maxX = max(size.width, size.width - drift);
     }
     final double x = minX + random.nextDouble() * (maxX - minX);
-    final int layer = random.nextInt(
-      numberOfLayers,
-    ); // 0 is the layer furthest behind
+    final int layer =
+        random.nextInt(numberOfLayers); // 0 is the layer furthest behind
     final double scale = 1 + layer * distanceBetweenLayers;
     final double height = dropSize.height * scale;
-    drop.drop = Rect.fromLTWH(
-      x,
-      top ?? -height,
-      dropSize.width * scale,
-      height,
-    );
+    drop.drop =
+        Rect.fromLTWH(x, top ?? -height, dropSize.width * scale, height);
     drop.dropSpeed = dropFallSpeed * scale;
     drop.dropLayer = layer;
     drop.dropColor = dropColors[random.nextInt(dropColors.length)];
@@ -394,17 +380,14 @@ class ParallaxRainPainter extends CustomPainter {
 
   Paint _paintFor(Drop drop) {
     final List<Paint?> byLayer = _paints.putIfAbsent(
-      drop.dropColor,
-      () => List<Paint?>.filled(numberOfLayers, null),
-    );
+        drop.dropColor, () => List<Paint?>.filled(numberOfLayers, null));
     final int layer = drop.dropLayer;
     return byLayer[layer] ??= _createPaint(drop);
   }
 
   Paint _createPaint(Drop drop) {
-    final Color color = drop.dropColor.withAlpha(
-      (255.0 * (drop.dropLayer + 1) / numberOfLayers).round(),
-    );
+    final Color color = drop.dropColor
+        .withAlpha((255.0 * (drop.dropLayer + 1) / numberOfLayers).round());
     if (!trail) {
       return Paint()
         ..color = color

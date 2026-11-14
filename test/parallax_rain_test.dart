@@ -32,9 +32,8 @@ class _RotationRecorder implements Canvas {
 }
 
 void main() {
-  testWidgets('builds with defaults and scatters drops on first paint', (
-    tester,
-  ) async {
+  testWidgets('builds with defaults and scatters drops on first paint',
+      (tester) async {
     await tester.pumpWidget(_app(const SizedBox.expand(child: ParallaxRain())));
 
     final ParallaxRainPainter painter = _state(tester).parallaxRainPainter;
@@ -45,35 +44,26 @@ void main() {
     }
   });
 
-  testWidgets('rainIsInBackground selects painter or foregroundPainter', (
-    tester,
-  ) async {
+  testWidgets('rainIsInBackground selects painter or foregroundPainter',
+      (tester) async {
     await tester.pumpWidget(_app(const ParallaxRain(child: Text('child'))));
     expect(_rainPaint(tester).painter, isA<ParallaxRainPainter>());
     expect(_rainPaint(tester).foregroundPainter, isNull);
 
-    await tester.pumpWidget(
-      _app(
-        ParallaxRain(
-          key: UniqueKey(),
-          rainIsInBackground: false,
-          child: const Text('child'),
-        ),
-      ),
-    );
+    await tester.pumpWidget(_app(ParallaxRain(
+      key: UniqueKey(),
+      rainIsInBackground: false,
+      child: const Text('child'),
+    )));
     expect(_rainPaint(tester).painter, isNull);
     expect(_rainPaint(tester).foregroundPainter, isA<ParallaxRainPainter>());
     expect(find.text('child'), findsOneWidget);
   });
 
   testWidgets('drops move with elapsed time', (tester) async {
-    await tester.pumpWidget(
-      _app(
-        const SizedBox.expand(
-          child: ParallaxRain(numberOfDrops: 50, numberOfLayers: 1),
-        ),
-      ),
-    );
+    await tester.pumpWidget(_app(const SizedBox.expand(
+      child: ParallaxRain(numberOfDrops: 50, numberOfLayers: 1),
+    )));
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
     await tester.pump(const Duration(milliseconds: 16));
     final List<double> before = [for (final d in drops) d.drop.top];
@@ -93,18 +83,12 @@ void main() {
   testWidgets('a parent rebuild does not reset the drops', (tester) async {
     late StateSetter setOuterState;
     int counter = 0;
-    await tester.pumpWidget(
-      _app(
-        StatefulBuilder(
-          builder: (context, setState) {
-            setOuterState = setState;
-            return SizedBox.expand(
-              child: ParallaxRain(child: Text('$counter')),
-            );
-          },
-        ),
-      ),
-    );
+    await tester.pumpWidget(_app(StatefulBuilder(builder: (context, setState) {
+      setOuterState = setState;
+      return SizedBox.expand(
+        child: ParallaxRain(child: Text('$counter')),
+      );
+    })));
     final ParallaxRainState state = _state(tester);
     final List<Drop> drops = state.parallaxRainPainter.dropList;
 
@@ -118,18 +102,15 @@ void main() {
   });
 
   testWidgets('new settings apply to the existing drops without resetting them',
-      (
-    tester,
-  ) async {
-    Widget rain({int drops = 50, int layers = 3, List<Color>? colors}) => _app(
-          SizedBox.expand(
-            child: ParallaxRain(
-              numberOfDrops: drops,
-              numberOfLayers: layers,
-              dropColors: colors ?? const [_red],
-            ),
+      (tester) async {
+    Widget rain({int drops = 50, int layers = 3, List<Color>? colors}) =>
+        _app(SizedBox.expand(
+          child: ParallaxRain(
+            numberOfDrops: drops,
+            numberOfLayers: layers,
+            dropColors: colors ?? const [_red],
           ),
-        );
+        ));
     await tester.pumpWidget(rain());
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
     final List<Offset> positions = [for (final d in drops) d.drop.topLeft];
@@ -162,15 +143,13 @@ void main() {
   });
 
   testWidgets('drops move along when the size changes', (tester) async {
-    Widget rain(double width, double height) => _app(
-          Center(
-            child: SizedBox(
-              width: width,
-              height: height,
-              child: const ParallaxRain(numberOfDrops: 50),
-            ),
+    Widget rain(double width, double height) => _app(Center(
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: const ParallaxRain(numberOfDrops: 50),
           ),
-        );
+        ));
     await tester.pumpWidget(rain(200, 100));
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
     final List<double> lefts = [for (final d in drops) d.drop.left];
@@ -193,27 +172,23 @@ void main() {
     double speed = 1,
     bool? override,
   }) =>
-      _app(
-        MediaQuery(
-          data: MediaQueryData(disableAnimations: reduceMotion),
-          child: SizedBox.expand(
-            child: ParallaxRain(
-              numberOfDrops: 50,
-              numberOfLayers: 1,
-              dropFallSpeed: speed,
-              reducedMotion: override,
-            ),
+      _app(MediaQuery(
+        data: MediaQueryData(disableAnimations: reduceMotion),
+        child: SizedBox.expand(
+          child: ParallaxRain(
+            numberOfDrops: 50,
+            numberOfLayers: 1,
+            dropFallSpeed: speed,
+            reducedMotion: override,
           ),
         ),
-      );
+      ));
 
-  List<double> tops(WidgetTester tester) => [
-        for (final d in _state(tester).parallaxRainPainter.dropList) d.drop.top,
-      ];
+  List<double> tops(WidgetTester tester) =>
+      [for (final d in _state(tester).parallaxRainPainter.dropList) d.drop.top];
 
-  testWidgets('reduced motion stops the rain but still shows the drops', (
-    tester,
-  ) async {
+  testWidgets('reduced motion stops the rain but still shows the drops',
+      (tester) async {
     await tester.pumpWidget(motionApp(reduceMotion: true));
     expect(tester.binding.transientCallbackCount, 0);
     expect(_state(tester).parallaxRainPainter.dropList, hasLength(50));
@@ -234,9 +209,8 @@ void main() {
     expect(tester.binding.transientCallbackCount, 0);
   });
 
-  testWidgets('the rain stops and resumes with the reduced motion setting', (
-    tester,
-  ) async {
+  testWidgets('the rain stops and resumes with the reduced motion setting',
+      (tester) async {
     await tester.pumpWidget(motionApp(reduceMotion: false));
     await tester.pump(const Duration(milliseconds: 100));
     expect(tester.binding.transientCallbackCount, greaterThan(0));
@@ -265,9 +239,8 @@ void main() {
     expect(moving, greaterThan(0));
   });
 
-  testWidgets('a fall speed of 0 stops the animation until it is raised', (
-    tester,
-  ) async {
+  testWidgets('a fall speed of 0 stops the animation until it is raised',
+      (tester) async {
     await tester.pumpWidget(motionApp(reduceMotion: false, speed: 0));
     expect(tester.binding.transientCallbackCount, 0);
     final List<double> before = tops(tester);
@@ -281,20 +254,19 @@ void main() {
     expect(tops(tester), isNot(before));
   });
 
-  Widget angledApp(double angle, {int drops = 50, double speed = 1}) => _app(
-        Center(
-          child: SizedBox(
-            width: 600,
-            height: 400,
-            child: ParallaxRain(
-              numberOfDrops: drops,
-              numberOfLayers: 1,
-              dropFallSpeed: speed,
-              angle: angle,
-            ),
+  Widget angledApp(double angle, {int drops = 50, double speed = 1}) =>
+      _app(Center(
+        child: SizedBox(
+          width: 600,
+          height: 400,
+          child: ParallaxRain(
+            numberOfDrops: drops,
+            numberOfLayers: 1,
+            dropFallSpeed: speed,
+            angle: angle,
           ),
         ),
-      );
+      ));
 
   for (final double angle in [pi / 6, -pi / 6]) {
     testWidgets('a drop falls along an angle of $angle', (tester) async {
@@ -318,9 +290,8 @@ void main() {
     });
   }
 
-  testWidgets('tilted rain still covers the side it falls away from', (
-    tester,
-  ) async {
+  testWidgets('tilted rain still covers the side it falls away from',
+      (tester) async {
     await tester.pumpWidget(angledApp(pi / 6, drops: 1000, speed: 5));
     // Let the drops that started above the area reach the bottom.
     for (int i = 0; i < 40; i++) {
@@ -342,9 +313,7 @@ void main() {
 
     await tester.pumpWidget(angledApp(pi / 6, drops: 5));
     expect(
-      rotations(_state(tester).parallaxRainPainter),
-      everyElement(-pi / 6),
-    );
+        rotations(_state(tester).parallaxRainPainter), everyElement(-pi / 6));
     expect(rotations(_state(tester).parallaxRainPainter), hasLength(5));
 
     await tester.pumpWidget(angledApp(0, drops: 5));
@@ -377,22 +346,17 @@ void main() {
     expect(tester.takeException(), isAssertionError);
   });
 
-  testWidgets('works inside Row and Column (unbounded constraints)', (
-    tester,
-  ) async {
+  testWidgets('works inside Row and Column (unbounded constraints)',
+      (tester) async {
     // Not const: the Flutter SDK's own Row/Column asserts can't be evaluated at compile time.
-    await tester.pumpWidget(
-      _app(
-        // ignore: prefer_const_constructors, prefer_const_literals_to_create_immutables
-        Column(
-          children: [
-            // ignore: prefer_const_constructors
-            Row(children: const [ParallaxRain(child: Text('row'))]),
-            const ParallaxRain(child: Text('column')),
-          ],
-        ),
-      ),
-    );
+    await tester.pumpWidget(_app(
+      // ignore: prefer_const_constructors, prefer_const_literals_to_create_immutables
+      Column(children: [
+        // ignore: prefer_const_constructors
+        Row(children: const [ParallaxRain(child: Text('row'))]),
+        const ParallaxRain(child: Text('column')),
+      ]),
+    ));
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(tester.takeException(), isNull);
@@ -410,59 +374,42 @@ void main() {
     expect(tester.binding.hasScheduledFrame, isFalse);
   });
 
-  testWidgets('does not change the child semantics or hit testing', (
-    tester,
-  ) async {
+  testWidgets('does not change the child semantics or hit testing',
+      (tester) async {
     int taps = 0;
-    await tester.pumpWidget(
-      _app(
-        ParallaxRain(
-          rainIsInBackground: false,
-          child: GestureDetector(onTap: () => taps++, child: const Text('tap')),
-        ),
-      ),
-    );
+    await tester.pumpWidget(_app(ParallaxRain(
+      rainIsInBackground: false,
+      child: GestureDetector(onTap: () => taps++, child: const Text('tap')),
+    )));
 
     await tester.tap(find.text('tap'));
     expect(taps, 1);
   });
 
-  testWidgets('alignment places the child inside the rain area', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _app(
-        const Align(
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 200,
-            height: 100,
-            child: ParallaxRain(
-              alignment: Alignment.bottomRight,
-              child: SizedBox(key: Key('c'), width: 20, height: 10),
-            ),
-          ),
+  testWidgets('alignment places the child inside the rain area',
+      (tester) async {
+    await tester.pumpWidget(_app(const Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        width: 200,
+        height: 100,
+        child: ParallaxRain(
+          alignment: Alignment.bottomRight,
+          child: SizedBox(key: Key('c'), width: 20, height: 10),
         ),
       ),
-    );
+    )));
     expect(tester.getSize(find.byType(ParallaxRain)), const Size(200, 100));
-    expect(
-      tester.getBottomRight(find.byKey(const Key('c'))),
-      const Offset(200, 100),
-    );
+    expect(tester.getBottomRight(find.byKey(const Key('c'))),
+        const Offset(200, 100));
   });
 
-  testWidgets('without alignment the rain is as big as the child', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _app(
-        const Align(
-          alignment: Alignment.topLeft,
-          child: ParallaxRain(child: SizedBox(width: 20, height: 10)),
-        ),
-      ),
-    );
+  testWidgets('without alignment the rain is as big as the child',
+      (tester) async {
+    await tester.pumpWidget(_app(const Align(
+      alignment: Alignment.topLeft,
+      child: ParallaxRain(child: SizedBox(width: 20, height: 10)),
+    )));
     expect(tester.getSize(find.byType(ParallaxRain)), const Size(20, 10));
   });
 }
