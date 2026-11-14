@@ -8,8 +8,6 @@ import 'package:flutter/scheduler.dart';
 /// library.
 const Color _greenAccent = Color(0xFF69F0AE);
 
-// TODO: Allow custom positioning of the child widget (is only center at the moment)
-
 /// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
   const ParallaxRain(
@@ -26,6 +24,7 @@ class ParallaxRain extends StatefulWidget {
       this.rainIsInBackground = true,
       this.trail = false,
       this.angle = 0,
+      this.alignment,
       this.reducedMotion})
       : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
         assert(angle > -pi / 2 && angle < pi / 2,
@@ -68,6 +67,11 @@ class ParallaxRain extends StatefulWidget {
   /// For example `pi / 12` is 15 degrees. [dropFallSpeed] is the speed along the path. It must be
   /// between -pi / 2 and pi / 2 (exclusive). Defaults to 0, straight down.
   final double angle;
+
+  /// How [child] is positioned inside the rain area. When it is null (the default), the child gets
+  /// the incoming constraints and the rain is as big as the child. When it is set, the rain fills
+  /// the space the parent allows (if bounded) and the child is aligned inside it.
+  final AlignmentGeometry? alignment;
 
   /// Whether the rain is held still. The drops stay where they are, and nothing is repainted
   /// while this is true.
@@ -204,6 +208,7 @@ class ParallaxRainState extends State<ParallaxRain>
       child: CustomPaint(
         painter: (widget.rainIsInBackground) ? parallaxRainPainter : null,
         child: Container(
+          alignment: widget.alignment,
           child: widget.child,
         ),
         foregroundPainter:

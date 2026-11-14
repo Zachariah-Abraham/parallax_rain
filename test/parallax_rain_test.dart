@@ -385,4 +385,31 @@ void main() {
     await tester.tap(find.text('tap'));
     expect(taps, 1);
   });
+
+  testWidgets('alignment places the child inside the rain area',
+      (tester) async {
+    await tester.pumpWidget(_app(const Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(
+        width: 200,
+        height: 100,
+        child: ParallaxRain(
+          alignment: Alignment.bottomRight,
+          child: SizedBox(key: Key('c'), width: 20, height: 10),
+        ),
+      ),
+    )));
+    expect(tester.getSize(find.byType(ParallaxRain)), const Size(200, 100));
+    expect(tester.getBottomRight(find.byKey(const Key('c'))),
+        const Offset(200, 100));
+  });
+
+  testWidgets('without alignment the rain is as big as the child',
+      (tester) async {
+    await tester.pumpWidget(_app(const Align(
+      alignment: Alignment.topLeft,
+      child: ParallaxRain(child: SizedBox(width: 20, height: 10)),
+    )));
+    expect(tester.getSize(find.byType(ParallaxRain)), const Size(20, 10));
+  });
 }

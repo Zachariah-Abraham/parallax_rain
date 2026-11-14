@@ -149,6 +149,8 @@ $F analyze                      # root package (must be clean before committing)
 $F test                         # root package tests
 (cd example && $F pub get && $F analyze && $F test)
 $D format lib test example/lib example/test
+# Format with the SDK CI uses (3.50), the local stable SDK formats differently and rewrites whole files:
+# ~/fvm/versions/3.50.0/bin/dart format lib test example/lib example/test
 $F pub publish --dry-run        # validates the package; NEVER run without --dry-run unless the human asks
 ```
 
