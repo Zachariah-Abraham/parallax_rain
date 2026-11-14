@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:parallax_rain/parallax_rain.dart';
@@ -239,6 +241,88 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
     expect(tops(tester), isNot(before));
+  });
+
+  Widget angledApp(double angle, {int drops = 50, double speed = 1}) =>
+      _app(Center(
+        child: SizedBox(
+          width: 600,
+          height: 400,
+          child: ParallaxRain(
+            numberOfDrops: drops,
+            numberOfLayers: 1,
+            dropFallSpeed: speed,
+            angle: angle,
+          ),
+        ),
+      ));
+
+  for (final double angle in [pi / 6, -pi / 6]) {
+    testWidgets('a drop falls along an angle of $angle', (tester) async {
+      await tester.pumpWidget(angledApp(angle));
+      final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
+      await tester.pump(const Duration(milliseconds: 16));
+      final List<Offset> before = [for (final d in drops) d.drop.topLeft];
+
+      await tester.pump(const Duration(milliseconds: 50));
+      const double distance = 50000 / 16667;
+      int moving = 0;
+      for (int i = 0; i < drops.length; i++) {
+        final Offset moved = drops[i].drop.topLeft - before[i];
+        // Respawned drops jump to a new place.
+        if (moved.dy <= 0 || moved.dy > distance) continue;
+        expect(moved.dx, closeTo(distance * sin(angle), 0.01));
+        expect(moved.dy, closeTo(distance * cos(angle), 0.01));
+        moving++;
+      }
+      expect(moving, greaterThan(0));
+    });
+  }
+
+  testWidgets('tilted rain still covers the side it falls away from',
+      (tester) async {
+    await tester.pumpWidget(angledApp(pi / 6, drops: 1000, speed: 5));
+    // Let the drops that started above the area reach the bottom.
+    for (int i = 0; i < 40; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
+    // The lower left corner is only reached by drops that started left of the area.
+    final int corner =
+        drops.where((d) => d.drop.left < 50 && d.drop.top > 300).length;
+    expect(corner, greaterThan(0));
+  });
+
+  testWidgets('drops are drawn along their angle', (tester) async {
+    await tester.pumpWidget(angledApp(pi / 6, drops: 5));
+    final RenderObject paint = tester.renderObject(find.descendant(
+      of: find.byType(ParallaxRain),
+      matching: find.byType(CustomPaint),
+    ));
+    expect(paint, paints..rotate(angle: -pi / 6));
+
+    await tester.pumpWidget(angledApp(0, drops: 5));
+    expect(
+      tester.renderObject(find.descendant(
+        of: find.byType(ParallaxRain),
+        matching: find.byType(CustomPaint),
+      )),
+      isNot(paints..rotate()),
+    );
+  });
+
+  testWidgets('changing the angle keeps the drops', (tester) async {
+    await tester.pumpWidget(angledApp(0));
+    final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
+    await tester.pumpWidget(angledApp(pi / 6));
+    expect(_state(tester).parallaxRainPainter.angle, pi / 6);
+    expect(_state(tester).parallaxRainPainter.dropList, same(drops));
+  });
+
+  test('an angle of a quarter turn or more is rejected', () {
+    expect(() => ParallaxRain(angle: pi / 2), throwsAssertionError);
+    expect(() => ParallaxRain(angle: -pi / 2), throwsAssertionError);
+    expect(const ParallaxRain(angle: pi / 3).angle, pi / 3);
   });
 
   testWidgets('can be a const widget', (tester) async {
