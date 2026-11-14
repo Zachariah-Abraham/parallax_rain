@@ -26,16 +26,16 @@ class ParallaxRain extends StatefulWidget {
     this.angle = 0,
     this.alignment,
     this.reducedMotion,
-  }) : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
-       assert(
-         angle > -pi / 2 && angle < pi / 2,
-         "The angle must be between -pi / 2 and pi / 2 (exclusive)",
-       ),
-       assert(
-         distanceBetweenLayers > 0,
-         "The distance between layers cannot be 0, try setting the number of layers to 1 instead",
-       ),
-       super(key: key);
+  })  : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
+        assert(
+          angle > -pi / 2 && angle < pi / 2,
+          "The angle must be between -pi / 2 and pi / 2 (exclusive)",
+        ),
+        assert(
+          distanceBetweenLayers > 0,
+          "The distance between layers cannot be 0, try setting the number of layers to 1 instead",
+        ),
+        super(key: key);
 
   /// Number of drops on screen at any moment
   final int numberOfDrops;
@@ -149,8 +149,7 @@ class ParallaxRainState extends State<ParallaxRain>
     super.didChangeDependencies();
     // Not MediaQuery.of: it asserts when there is no MediaQuery, and nullOk/maybeOf aren't available
     // on every supported Flutter version.
-    _reduceMotion =
-        context
+    _reduceMotion = context
             .dependOnInheritedWidgetOfExactType<MediaQuery>()
             ?.data
             .disableAnimations ??
@@ -277,9 +276,9 @@ class ParallaxRainPainter extends CustomPainter {
     required this.distanceBetweenLayers,
     this.angle = 0,
     required this.notifier,
-  }) : _sin = sin(angle),
-       _cos = cos(angle),
-       super(repaint: notifier);
+  })  : _sin = sin(angle),
+        _cos = cos(angle),
+        super(repaint: notifier);
 
   /// The fall direction, a unit vector (sin, cos) of [angle].
   final double _sin;
@@ -287,10 +286,9 @@ class ParallaxRainPainter extends CustomPainter {
 
   /// Scatters drops randomly over the canvas until there are [numberOfDrops].
   void initialize(Canvas canvas, Size size) {
-    paintObject =
-        Paint()
-          ..color = dropColors[0]
-          ..style = PaintingStyle.fill;
+    paintObject = Paint()
+      ..color = dropColors[0]
+      ..style = PaintingStyle.fill;
     dropSize = Size(dropWidth, dropHeight);
     while (dropList.length < numberOfDrops) {
       // Keeping [widget.numberOfLayers] layers for the parallax effect, the base values are for the layer furthest behind
@@ -313,10 +311,9 @@ class ParallaxRainPainter extends CustomPainter {
     _lastSize = old._lastSize;
     if (old.dropList.isEmpty) return;
     dropSize = Size(dropWidth, dropHeight);
-    paintObject =
-        Paint()
-          ..color = dropColors[0]
-          ..style = PaintingStyle.fill;
+    paintObject = Paint()
+      ..color = dropColors[0]
+      ..style = PaintingStyle.fill;
     dropList = old.dropList;
     if (dropList.length > numberOfDrops) {
       dropList.removeRange(numberOfDrops, dropList.length);
@@ -372,14 +369,12 @@ class ParallaxRainPainter extends CustomPainter {
   /// positions. On an axis that had no extent, drops are scattered randomly instead.
   void _resize(Size oldSize, Size size) {
     for (final Drop drop in dropList) {
-      final double left =
-          oldSize.width > 0
-              ? drop.drop.left * size.width / oldSize.width
-              : random.nextDouble() * size.width;
-      final double top =
-          oldSize.height > 0
-              ? drop.drop.top * size.height / oldSize.height
-              : random.nextDouble() * size.height;
+      final double left = oldSize.width > 0
+          ? drop.drop.left * size.width / oldSize.width
+          : random.nextDouble() * size.width;
+      final double top = oldSize.height > 0
+          ? drop.drop.top * size.height / oldSize.height
+          : random.nextDouble() * size.height;
       drop.drop = Rect.fromLTWH(left, top, drop.drop.width, drop.drop.height);
     }
   }

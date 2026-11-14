@@ -11,11 +11,11 @@ const Color _red = Color(0xFFFF0000);
 const Color _blue = Color(0xFF0000FF);
 
 CustomPaint _rainPaint(WidgetTester tester) => tester.widget<CustomPaint>(
-  find.descendant(
-    of: find.byType(ParallaxRain),
-    matching: find.byType(CustomPaint),
-  ),
-);
+      find.descendant(
+        of: find.byType(ParallaxRain),
+        matching: find.byType(CustomPaint),
+      ),
+    );
 
 ParallaxRainState _state(WidgetTester tester) =>
     tester.state<ParallaxRainState>(find.byType(ParallaxRain));
@@ -117,18 +117,19 @@ void main() {
     expect(drops, hasLength(200));
   });
 
-  testWidgets('new settings apply to the existing drops without resetting them', (
+  testWidgets('new settings apply to the existing drops without resetting them',
+      (
     tester,
   ) async {
     Widget rain({int drops = 50, int layers = 3, List<Color>? colors}) => _app(
-      SizedBox.expand(
-        child: ParallaxRain(
-          numberOfDrops: drops,
-          numberOfLayers: layers,
-          dropColors: colors ?? const [_red],
-        ),
-      ),
-    );
+          SizedBox.expand(
+            child: ParallaxRain(
+              numberOfDrops: drops,
+              numberOfLayers: layers,
+              dropColors: colors ?? const [_red],
+            ),
+          ),
+        );
     await tester.pumpWidget(rain());
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
     final List<Offset> positions = [for (final d in drops) d.drop.topLeft];
@@ -162,14 +163,14 @@ void main() {
 
   testWidgets('drops move along when the size changes', (tester) async {
     Widget rain(double width, double height) => _app(
-      Center(
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: const ParallaxRain(numberOfDrops: 50),
-        ),
-      ),
-    );
+          Center(
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: const ParallaxRain(numberOfDrops: 50),
+            ),
+          ),
+        );
     await tester.pumpWidget(rain(200, 100));
     final List<Drop> drops = _state(tester).parallaxRainPainter.dropList;
     final List<double> lefts = [for (final d in drops) d.drop.left];
@@ -191,23 +192,24 @@ void main() {
     required bool reduceMotion,
     double speed = 1,
     bool? override,
-  }) => _app(
-    MediaQuery(
-      data: MediaQueryData(disableAnimations: reduceMotion),
-      child: SizedBox.expand(
-        child: ParallaxRain(
-          numberOfDrops: 50,
-          numberOfLayers: 1,
-          dropFallSpeed: speed,
-          reducedMotion: override,
+  }) =>
+      _app(
+        MediaQuery(
+          data: MediaQueryData(disableAnimations: reduceMotion),
+          child: SizedBox.expand(
+            child: ParallaxRain(
+              numberOfDrops: 50,
+              numberOfLayers: 1,
+              dropFallSpeed: speed,
+              reducedMotion: override,
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   List<double> tops(WidgetTester tester) => [
-    for (final d in _state(tester).parallaxRainPainter.dropList) d.drop.top,
-  ];
+        for (final d in _state(tester).parallaxRainPainter.dropList) d.drop.top,
+      ];
 
   testWidgets('reduced motion stops the rain but still shows the drops', (
     tester,
@@ -280,19 +282,19 @@ void main() {
   });
 
   Widget angledApp(double angle, {int drops = 50, double speed = 1}) => _app(
-    Center(
-      child: SizedBox(
-        width: 600,
-        height: 400,
-        child: ParallaxRain(
-          numberOfDrops: drops,
-          numberOfLayers: 1,
-          dropFallSpeed: speed,
-          angle: angle,
+        Center(
+          child: SizedBox(
+            width: 600,
+            height: 400,
+            child: ParallaxRain(
+              numberOfDrops: drops,
+              numberOfLayers: 1,
+              dropFallSpeed: speed,
+              angle: angle,
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   for (final double angle in [pi / 6, -pi / 6]) {
     testWidgets('a drop falls along an angle of $angle', (tester) async {
