@@ -21,20 +21,19 @@ _Last updated: 2026-11-13_
 - Maintainer files (`AGENTS.md`, `CLAUDE.md`, `tasks.md`, `release-please-config.json`) are
   excluded from the published package via `.pubignore`.
 
-## Pending (rough priority order)
+## Decisions (features)
+- The state/painter/`Drop` classes stay public (decided 2026-11-14). `runAnimation` stays deprecated.
 
-### 1. Housekeeping
-- [ ] Decide whether to make `ParallaxRainState`, `ParallaxRainPainter`, `Drop` private (major).
-      If yes, also remove the deprecated `ParallaxRainState.runAnimation`.
-- [ ] Optional: make the `ParallaxRain` constructor `const` (non-breaking, a `feat:`).
-
-### 2. Features (ideas, not committed to)
-- [ ] Custom drop look: drop shapes (rounded, streak/line, circle) and/or a sprite `ui.Image`
-      drawn with `drawRawAtlas`. A per-drop widget builder is too slow (hundreds of widgets per
-      frame).
-- [ ] Glass rain: drops that refract what's behind them. Needs `ImageFilter.shader` (Impeller,
-      Flutter 3.29+), one full-area backdrop filter, not one per drop. Drop data via uniforms
-      (check impellerc's uniform array limits) or computed procedurally in the shader from time.
-      Fall back to plain translucent drops on Skia/web (`ImageFilter.isShaderFilterSupported`).
-      Reuse what worked in `../glass` (`shaders/liquid_glass.frag`, `_LiquidBackdropLayer`).
-- [ ] Child alignment (TODO in source), wind/angle.
+## Pending (in this order)
+1. [ ] `angle`: tilt the fall direction (radians, default 0). Branch `feat/angle` after
+       `feat/const-constructor` is merged.
+2. [ ] Glass rain: drops that refract what's behind them. Needs `ImageFilter.shader` (Impeller,
+       Flutter 3.29+), one full-area backdrop filter, not one per drop. Drop data via uniforms
+       (check impellerc's uniform array limits) or computed procedurally in the shader from time.
+       Fall back to plain translucent drops on Skia/web (`ImageFilter.isShaderFilterSupported`).
+       Reuse what worked in `../glass` (`shaders/liquid_glass.frag`, `_LiquidBackdropLayer`).
+       Raises the SDK minimum to 3.29 only if it can't be done behind a version check (see
+       Decisions above).
+3. [ ] Later: drop shapes (rounded, streak/line, circle) and/or a sprite `ui.Image` drawn with
+       `drawRawAtlas`. A per-drop widget builder is too slow (hundreds of widgets per frame).
+4. [ ] Child alignment (TODO in source).

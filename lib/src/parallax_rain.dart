@@ -12,7 +12,7 @@ const Color _greenAccent = Color(0xFF69F0AE);
 
 /// Create a cool 3D rain effect!
 class ParallaxRain extends StatefulWidget {
-  ParallaxRain(
+  const ParallaxRain(
       {Key? key,
       this.numberOfDrops = 200,
       this.dropFallSpeed = 1,
@@ -27,7 +27,6 @@ class ParallaxRain extends StatefulWidget {
       this.trail = false,
       this.reducedMotion})
       : assert(numberOfLayers >= 1, "The minimum number of layers is 1"),
-        assert(dropColors.isNotEmpty, "The drop colors list cannot be empty"),
         assert(distanceBetweenLayers > 0,
             "The distance between layers cannot be 0, try setting the number of layers to 1 instead"),
         super(key: key);
@@ -123,6 +122,7 @@ class ParallaxRainState extends State<ParallaxRain>
   @override
   void initState() {
     super.initState();
+    _assertSettings();
     parallaxRainPainter = _createPainter();
   }
 
@@ -137,6 +137,12 @@ class ParallaxRainState extends State<ParallaxRain>
             .disableAnimations ??
         false;
     _syncTicker();
+  }
+
+  /// Checks what a const constructor can't.
+  void _assertSettings() {
+    assert(
+        widget.dropColors.isNotEmpty, "The drop colors list cannot be empty");
   }
 
   ParallaxRainPainter _createPainter() {
@@ -157,6 +163,7 @@ class ParallaxRainState extends State<ParallaxRain>
   @override
   void didUpdateWidget(ParallaxRain oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _assertSettings();
     final ParallaxRain w = widget;
     if (w.numberOfDrops != oldWidget.numberOfDrops ||
         w.dropFallSpeed != oldWidget.dropFallSpeed ||
